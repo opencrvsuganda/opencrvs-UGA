@@ -21,5 +21,17 @@ export const conditionals: IConditionals = {
   isOfficePreSelected: {
     action: 'hide',
     expression: 'values.skippedOfficeSelction && values.registrationOffice'
+  },
+  certCollectorOther: {
+    action: 'hide',
+    expression: 'values.type !== "OTHER"'
+  },
+  iDType: {
+    action: 'hide',
+    expression: "!values.iDType || (values.iDType !== 'OTHER')"
+  },
+  iDAvailable: {
+    action: 'hide',
+    expression: '!values.iDType || values.iDType === "NO_ID"'
   }
 }

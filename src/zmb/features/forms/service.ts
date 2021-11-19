@@ -12,6 +12,7 @@
 import { readFile } from 'fs'
 import { join } from 'path'
 import { userSection } from './user/userSection'
+import { collectorSection } from './certificateCollectors/collectorSection'
 
 interface IForm {
   sections: Array<any> // no point defining full types here as we don't use them
@@ -51,7 +52,7 @@ export interface IForms {
 export async function getForms(): Promise<IForms> {
   return new Promise((resolve, reject) => {
     readFile(join(__dirname, './register.json'), (err, data) => {
-      const forms = { ...JSON.parse(data.toString()), userForm: userSection }
+      const forms = { ...JSON.parse(data.toString()), userForm: userSection, collectorForm: collectorSection }
       err ? reject(err) : resolve(forms)
     })
   })

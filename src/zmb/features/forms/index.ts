@@ -70,11 +70,14 @@ enum UserSection {
   Preview = 'preview'
 }
 
-enum CertificateSection {
+export enum CertificateSection {
   Collector = 'collector',
+  BirthCollector = 'birthCollector',
+  DeathCollector = 'deathCollector',
   CollectCertificate = 'collectCertificate',
   CollectDeathCertificate = 'collectDeathCertificate',
-  CertificatePreview = 'certificatePreview'
+  CertificatePreview = 'certificatePreview',
+  CertificateCollectorGroup = 'certificateCollectorGroup'
 }
 
 enum PaymentSection {
@@ -456,7 +459,7 @@ interface IFormTag {
   delimiter?: string
 }
 
-interface IFormSectionGroup {
+export interface IFormSectionGroup {
   id: string
   title?: MessageDescriptor
   previewGroups?: IFormTag[]
@@ -763,6 +766,9 @@ export interface IFormSection {
 }
 
 export interface IConditionals {
+  certCollectorOther: IConditional
   isRegistrarOrRegistrationAgentRoleSelected: IConditional
   isOfficePreSelected: IConditional
+  iDType: IConditional
+  iDAvailable: IConditional
 }
