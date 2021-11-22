@@ -330,7 +330,6 @@
               },
               "conditionals": [],
               "preventContinueIfError": true,
-              "showExitButtonOnly": true,
               "previewGroups": [
                 {
                   "id": "contactPointGroup",
