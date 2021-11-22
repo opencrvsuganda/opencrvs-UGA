@@ -33,7 +33,7 @@ import {
   export const PDF_DOCUMENT_VIEWER = 'PDF_DOCUMENT_VIEWER'
 
   export const certCollectorGroupApplicationFormSection: IFormSection = {
-    id: CertificateSection.Collector,
+    id: CertificateSection.CertificateCollectorGroup,
     viewType: 'form',
     name: formMessages.printCertificate,
     title: formMessages.certificateCollectionTitle,
