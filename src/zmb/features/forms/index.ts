@@ -72,6 +72,8 @@ enum UserSection {
 
 export enum CertificateSection {
   Collector = 'collector',
+  BirthCollector = 'birthCollector',
+  DeathCollector = 'deathCollector',
   CollectCertificate = 'collectCertificate',
   CollectDeathCertificate = 'collectDeathCertificate',
   CertificatePreview = 'certificatePreview',

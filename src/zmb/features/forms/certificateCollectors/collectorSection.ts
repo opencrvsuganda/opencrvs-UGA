@@ -140,7 +140,7 @@ import {
   }
 
   export const collectBirthCertificateFormSection: IFormSection = {
-    id: CertificateSection.Collector,
+    id: CertificateSection.BirthCollector,
     viewType: 'form',
     name: formMessages.printCertificate,
     title: formMessages.certificateCollectionTitle,
@@ -284,7 +284,7 @@ import {
   }
   
   export const collectDeathCertificateFormSection: IFormSection = {
-    id: CertificateSection.Collector,
+    id: CertificateSection.DeathCollector,
     viewType: 'form',
     name: formMessages.printCertificate,
     title: formMessages.certificateCollectionTitle,
