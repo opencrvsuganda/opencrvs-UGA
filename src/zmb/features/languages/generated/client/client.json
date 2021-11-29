@@ -646,6 +646,8 @@
         "form.field.label.docTypeNIDFront": "National ID (Front)",
         "form.field.label.docTypeSignedAffidavit": "Signed affidavit",
         "form.field.label.docTypeOther": "Other",
+        "form.field.label.docTypeOtherChildDOB": "Other For DOB",
+        "form.field.label.docTypeOtherChildAge": "Other For Age",
         "form.field.label.docTypePassport": "Passport",
         "form.field.label.docTypePostMortemReport": "Certified post mortem report",
         "form.field.label.docTypePoliceBroughtInDeathCertificate": "Police brought in dead certificate",
