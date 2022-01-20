@@ -5,6 +5,7 @@
   "license": "MPL-2.0",
   "scripts": {
     "e2e": "cypress run",
+    "dev": "bash dev.sh",
     "open:e2e": "CYPRESS_LOGIN_URL=http://localhost:3020/ CYPRESS_CLIENT_URL=http://localhost:3000/ CYPRESS_AUTH_URL=http://localhost:4040/ cypress open",
     "test:watch": "jest --watch",
     "open:cov": "yarn test && opener coverage/index.html",
