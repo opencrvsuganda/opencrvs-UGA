@@ -20,18 +20,12 @@ import {
   startOfDay
 } from 'date-fns'
 
-import {
-  createSystemClient,
-  createUser,
-  User,
-  getToken,
-  readToken,
-  updateToken
-} from './auth'
+import { getToken, readToken, updateToken } from './auth'
 import { createConcurrentBuffer, getRandomFromBrackets, log } from './util'
 import { Location, Facility } from './location'
 import { COUNTRY_CONFIG_HOST } from './constants'
 import { DistrictStatistic, getStatistics } from './statistics'
+import { User, createUsers } from './users'
 
 /*
  * The script logs in with a demo system admin
@@ -44,10 +38,10 @@ export const VERIFICATION_CODE = '000000'
 
 // Create 30 users for each location:
 // - 15 field agents, ten hospitals, four registration agents and one registrar
-const FIELD_AGENTS = 10
-const HOSPITAL_FIELD_AGENTS = 5
-const REGISTRATION_AGENTS = 5
-const LOCAL_REGISTRARS = 3
+export const FIELD_AGENTS = 10
+export const HOSPITAL_FIELD_AGENTS = 5
+export const REGISTRATION_AGENTS = 5
+export const LOCAL_REGISTRARS = 3
 
 const CONCURRENCY = 5
 const START_YEAR = 2021
@@ -74,7 +68,7 @@ async function getLocations(token: string) {
   )
 }
 
-async function getFacilities(token: string) {
+export async function getFacilities(token: string) {
   const res = await fetch(`${COUNTRY_CONFIG_HOST}/facilities`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -91,57 +85,6 @@ async function keepTokensValid(users: User[]) {
     const data = readToken(user.token)
     setTimeout(() => updateToken(user), data.exp * 1000 - Date.now() - 60000)
   })
-}
-
-async function createUsers(token: string, location: Location) {
-  const fieldAgents = []
-  const hospitals = []
-  const registrationAgents = []
-  const registrars = []
-  const crvsOffices = (await getFacilities(token))
-    .filter(({ type }) => type === 'CRVS_OFFICE')
-    .filter(({ partOf }) => partOf === 'Location/' + location.id)
-  if (crvsOffices.length === 0) {
-    throw new Error(`Cannot find any CRVS offices for ${location.name}`)
-  }
-  const randomOffice =
-    crvsOffices[Math.floor(Math.random() * crvsOffices.length)]
-  log('Creating field agents')
-  for (let i = 0; i < FIELD_AGENTS; i++) {
-    fieldAgents.push(
-      await createUser(token, randomOffice.id, {
-        role: 'FIELD_AGENT'
-      })
-    )
-  }
-  log('Field agents created')
-  log('Creating hospitals')
-  for (let i = 0; i < HOSPITAL_FIELD_AGENTS; i++) {
-    hospitals.push(await createSystemClient(token, randomOffice.id, 'HEALTH'))
-  }
-
-  log('Hospitals created')
-  log('Creating registration agents')
-  for (let i = 0; i < REGISTRATION_AGENTS; i++) {
-    registrationAgents.push(
-      await createUser(token, randomOffice.id, {
-        role: 'REGISTRATION_AGENT'
-      })
-    )
-  }
-  log('Registration agents created')
-  log('Creating local registrars')
-
-  for (let i = 0; i < LOCAL_REGISTRARS; i++) {
-    registrars.push(
-      await createUser(token, randomOffice.id, {
-        role: 'LOCAL_REGISTRAR'
-      })
-    )
-  }
-  log('Local registrars created')
-
-  return { fieldAgents, hospitals, registrationAgents, registrars }
 }
 
 function calculateCrudeDeathRateForYear(
@@ -262,7 +205,12 @@ async function main() {
   log('Found', locations.length, 'locations')
   for (const location of locations) {
     log('Creating users for', location)
-    const users = await createUsers(token, location)
+    const users = await createUsers(token, location, {
+      fieldAgents: FIELD_AGENTS,
+      hospitalFieldAgents: HOSPITAL_FIELD_AGENTS,
+      registrationAgents: REGISTRATION_AGENTS,
+      localRegistrars: LOCAL_REGISTRARS
+    })
     const allUsers = [
       ...users.fieldAgents,
       ...users.hospitals,

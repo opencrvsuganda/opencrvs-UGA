@@ -261,6 +261,17 @@ export async function createServer() {
   })
 
   server.route({
+    method: 'GET',
+    path: '/statistics',
+    handler: farajalandStatisticsHandler,
+    options: {
+      tags: ['api'],
+      description:
+        'Returns population and crude birth rate statistics for each location'
+    }
+  })
+
+  server.route({
     method: 'POST',
     path: '/dhis2-notification/birth',
     handler: birthNotificationHandler,
@@ -287,7 +298,10 @@ export async function createServer() {
   async function start() {
     await server.start()
     await usrMgntDB.connect()
-    server.log('info', `server started on ${COUNTRY_CONFIG_HOST}:${COUNTRY_CONFIG_PORT}`)
+    server.log(
+      'info',
+      `server started on ${COUNTRY_CONFIG_HOST}:${COUNTRY_CONFIG_PORT}`
+    )
   }
 
   return { server, start, stop }
