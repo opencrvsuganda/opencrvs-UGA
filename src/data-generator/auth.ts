@@ -1,5 +1,6 @@
 import faker from '@faker-js/faker'
 import fetch from 'node-fetch'
+import { AUTH_API_HOST } from './constants'
 import { VERIFICATION_CODE } from './index'
 
 export type User = {
@@ -15,27 +16,24 @@ export async function getToken(
   username: string,
   password: string
 ): Promise<string> {
-  const authenticateResponse = await fetch(
-    'http://localhost:4040/authenticate',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-correlation': username + '-' + Date.now()
-      },
-      body: JSON.stringify({
-        username,
-        password
-      })
-    }
-  )
+  const authenticateResponse = await fetch(`${AUTH_API_HOST}/authenticate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-correlation': username + '-' + Date.now()
+    },
+    body: JSON.stringify({
+      username,
+      password
+    })
+  })
   const { nonce, token } = await authenticateResponse.json()
 
   if (token) {
     return token
   }
 
-  const verifyResponse = await fetch('http://localhost:4040/verifyCode', {
+  const verifyResponse = await fetch(`${AUTH_API_HOST}/verifyCode`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
