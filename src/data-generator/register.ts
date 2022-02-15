@@ -14,6 +14,7 @@ export async function markAsRegistered(user: User, id: string) {
       days: 1
     }
   )
+
   const MINUTES_15 = 1000 * 60 * 15
   const details = {
     createdAt,
@@ -42,6 +43,11 @@ export async function markAsRegistered(user: User, id: string) {
       multipleBirth: declaration.child.multipleBirth,
       _fhirID: declaration.child.id
     },
+    // Hospital notifications have a limited set of data in them
+    // This part amends the missing fields if needed
+    birthType: declaration.birthType || 'SINGLE',
+    attendantAtBirth: declaration.attendantAtBirth,
+    weightAtBirth: declaration.weightAtBirth,
     eventLocation: {
       _fhirID: declaration._fhirIDMap.eventLocation
     },

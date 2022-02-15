@@ -32,7 +32,7 @@ export function createConcurrentBuffer(concurrency: number) {
     const prom = handler(...variablesToBind).catch(err => log(err))
     currentPromises.push(prom)
 
-    prom.then(() => currentPromises.splice(currentPromises.indexOf(prom), 1))
+    prom.finally(() => currentPromises.splice(currentPromises.indexOf(prom), 1))
 
     if (currentPromises.length < concurrency) {
       return Promise.resolve()

@@ -295,12 +295,44 @@ export async function createPersonEntry(
             }
           ]
         : [],
-      address: [],
+      address: [
+        {
+          type: 'PLACE_OF_HERITAGE',
+          line: ['', '', 'Chief name', '', '', ''],
+          district: '9cedaf28-8c0f-4d5f-b1c1-c96c437b0ba7',
+          state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
+          country: 'FAR'
+        },
+        {
+          type: 'PERMANENT',
+          line: ['', '', '', '', '', '', 'URBAN'],
+          district: 'd9437614-1cb2-4d70-b938-eb93c87a4310',
+          state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
+          country: 'FAR'
+        },
+        {
+          type: 'CURRENT',
+          line: ['', '', '', '', '', '', 'URBAN'],
+          district: 'd9437614-1cb2-4d70-b938-eb93c87a4310',
+          state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
+          country: 'FAR'
+        }
+      ],
       // Date values are expected to YYYY-MM-DD from DHIS2
       birthDate: birthDate,
       deceasedBoolean: !!deathDate,
       // Date values are expected to YYYY-MM-DD from DHIS2
-      deceasedDateTime: deathDate
+      deceasedDateTime: deathDate,
+      multipleBirthInteger: 2,
+      maritalStatus: {
+        coding: [
+          {
+            system: `http://hl7.org/fhir/StructureDefinition/marital-status`,
+            code: 'M'
+          }
+        ],
+        text: 'MARRIED'
+      }
     }
   }
 }
@@ -569,6 +601,78 @@ export function createPresentAtEventObservation(
         ]
       },
       valueString: presentAtEvent
+    }
+  }
+}
+export function createWeightAtBirthObservation(encounterRef: string) {
+  return {
+    fullUrl: `urn:uuid:${uuid()}`,
+    resource: {
+      resourceType: 'Observation',
+      status: 'final',
+      context: {
+        reference: encounterRef
+      },
+      category: [
+        {
+          coding: [
+            {
+              system: 'http://hl7.org/fhir/observation-category',
+              code: 'vital-signs',
+              display: 'Vital Signs'
+            }
+          ]
+        }
+      ],
+      code: {
+        coding: [
+          {
+            system: 'http://loinc.org',
+            code: '3141-9',
+            display: 'Body weight Measured'
+          }
+        ]
+      },
+      valueQuantity: {
+        value: 0.9,
+        unit: 'kg',
+        system: 'http://unitsofmeasure.org',
+        code: 'kg'
+      }
+    }
+  }
+}
+
+export function createAttendantAtBirthObservation(encounterRef: string) {
+  return {
+    fullUrl: `urn:uuid:${uuid()}`,
+    resource: {
+      resourceType: 'Observation',
+      status: 'final',
+      context: {
+        reference: encounterRef
+      },
+      category: [
+        {
+          coding: [
+            {
+              system: 'http://hl7.org/fhir/observation-category',
+              code: 'procedure',
+              display: 'Procedure'
+            }
+          ]
+        }
+      ],
+      code: {
+        coding: [
+          {
+            system: 'http://loinc.org',
+            code: '73764-3',
+            display: 'Birth attendant title'
+          }
+        ]
+      },
+      valueString: 'PHYSICIAN'
     }
   }
 }

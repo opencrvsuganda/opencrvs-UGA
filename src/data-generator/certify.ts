@@ -62,6 +62,9 @@ export async function markAsCertified(user: User, id: string) {
       multipleBirth: declaration.child.multipleBirth,
       _fhirID: declaration.child.id
     },
+    attendantAtBirth: declaration.attendantAtBirth,
+    birthType: declaration.birthType,
+    weightAtBirth: declaration.weightAtBirth,
     eventLocation: {
       _fhirID: declaration._fhirIDMap.eventLocation
     },

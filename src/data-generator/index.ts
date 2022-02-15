@@ -5,10 +5,6 @@ import {
 } from './declare'
 import { markAsRegistered, markDeathAsRegistered } from './register'
 import { markAsCertified, markDeathAsCertified } from './certify'
-import {
-  getStatistics,
-  LocationStatistic
-} from '../farajaland/features/administrative/statistics'
 
 import fetch from 'node-fetch'
 
@@ -34,6 +30,8 @@ import {
 } from './auth'
 import { createConcurrentBuffer, getRandomFromBrackets, log } from './util'
 import { Location, Facility } from './location'
+import { COUNTRY_CONFIG_HOST } from './constants'
+import { DistrictStatistic, getStatistics } from './statistics'
 
 /*
  * The script logs in with a demo system admin
@@ -43,10 +41,11 @@ import { Location, Facility } from './location'
 const USERNAME = 'emmanuel.mayuka'
 const PASSWORD = 'test'
 export const VERIFICATION_CODE = '000000'
-const FIELD_AGENTS = 3
+const FIELD_AGENTS = 10
 const HOSPITAL_FIELD_AGENTS = 1
 const REGISTRATION_AGENTS = 1
 const LOCAL_REGISTRARS = 1
+const CONCURRENCY = 1
 const START_YEAR = 2021
 const END_YEAR = 2022
 
@@ -58,7 +57,7 @@ const completionBrackets = [
 ]
 
 async function getLocations(token: string) {
-  const res = await fetch('http://localhost:3040/locations', {
+  const res = await fetch(`${COUNTRY_CONFIG_HOST}/locations`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'x-correlation': 'locations-' + Date.now().toString()
@@ -72,7 +71,7 @@ async function getLocations(token: string) {
 }
 
 async function getFacilities(token: string) {
-  const res = await fetch('http://localhost:3040/facilities', {
+  const res = await fetch(`${COUNTRY_CONFIG_HOST}/facilities`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'x-correlation': 'facilities-' + Date.now().toString()
@@ -145,48 +144,64 @@ function calculateCrudeDeathRateForYear(
   location: string,
   year: number,
   crudeDeathRate: number,
-  statistics: LocationStatistic[]
+  statistics: DistrictStatistic[]
 ) {
-  const statistic = statistics.find(({ name }) => name === location)
+  const statistic = statistics.find(({ id }) => id === location)
 
   if (!statistic) {
     throw new Error(`Cannot find statistics for location ${location}`)
   }
 
-  const yearlyStats = statistic.years.find(stat => year === stat.year)
+  const yearlyStats =
+    statistic.statistics[
+      'http://opencrvs.org/specs/id/statistics-total-populations'
+    ][year]
   if (!yearlyStats) {
     throw new Error(
       `Cannot find statistics for location ${location}, year ${year}`
     )
   }
 
-  return (yearlyStats.population / 1000) * crudeDeathRate
+  return (yearlyStats / 1000) * crudeDeathRate
 }
 
 function calculateCrudeBirthRatesForYear(
   location: string,
   year: number,
-  statistics: LocationStatistic[]
+  statistics: DistrictStatistic[]
 ) {
-  const statistic = statistics.find(({ name }) => name === location)
+  const statistic = statistics.find(({ id }) => id === location)
 
   if (!statistic) {
     throw new Error(
       `Cannot find statistics for location ${location}, year ${year}`
     )
   }
-  const yearlyStats = statistic.years.find(stat => year === stat.year)
-  if (!yearlyStats) {
+  const femalePopulation =
+    statistic.statistics[
+      'http://opencrvs.org/specs/id/statistics-female-populations'
+    ][year]
+  const malePopulation =
+    statistic.statistics[
+      'http://opencrvs.org/specs/id/statistics-male-populations'
+    ][year]
+  const crudeBirthRate =
+    statistic.statistics[
+      'http://opencrvs.org/specs/id/statistics-crude-birth-rates'
+    ][year]
+  if (
+    [femalePopulation, malePopulation, crudeBirthRate].some(
+      value => value === undefined
+    )
+  ) {
     throw new Error(
       `Cannot find statistics for location ${location}, year ${year}`
     )
   }
 
-  const { male_population, female_population, crude_birth_rate } = yearlyStats
-
   return {
-    male: (male_population / 1000) * crude_birth_rate,
-    female: (female_population / 1000) * crude_birth_rate
+    male: (malePopulation / 1000) * crudeBirthRate,
+    female: (femalePopulation / 1000) * crudeBirthRate
   }
 }
 
@@ -205,7 +220,7 @@ function startThroughputTimer() {
 }
 
 async function getCrudeDeathRate(token: string): Promise<number> {
-  const res = await fetch('http://localhost:3040/crude-death-rate', {
+  const res = await fetch(`${COUNTRY_CONFIG_HOST}/crude-death-rate`, {
     headers: {
       Authentication: `Bearer ${token}`
     }
@@ -216,16 +231,29 @@ async function getCrudeDeathRate(token: string): Promise<number> {
 }
 
 async function main() {
-  const statistics = await getStatistics()
-
   log('Fetching token for system administrator')
   const token = await getToken(USERNAME, PASSWORD)
+  let statistics: Awaited<ReturnType<typeof getStatistics>>
+  try {
+    statistics = await getStatistics(token)
+  } catch (error) {
+    console.error(`
+      /statistics endpoint was not found or returned an error.
+      Make sure the endpoint is implemented in your country config package
+    `)
+    return
+  }
 
   log('Got token for system administrator')
   log('Fetching locations')
   const locations = await (await getLocations(token))
     // TODO, remove
     .filter(({ id }) => '0fc529b4-4099-4b71-a26d-e367652b6921' === id)
+  const facilities = await getFacilities(token)
+  const crvsOffices = facilities.filter(({ type }) => type === 'CRVS_OFFICE')
+  const healthFacilities = facilities.filter(
+    ({ type }) => type === 'HEALTH_FACILITY'
+  )
 
   log('Found', locations.length, 'locations')
   for (const location of locations) {
@@ -257,14 +285,14 @@ async function main() {
     for (let y = END_YEAR; y >= START_YEAR; y--) {
       const isCurrentYear = y === currentYear
       const totalDeathsThisYear = calculateCrudeDeathRateForYear(
-        location.name,
+        location.id,
         isCurrentYear ? currentYear - 1 : y,
         crudeDeathRate,
         statistics
       )
       // Calculate crude birth & death rates for this district for both men and women
       const birthRates = calculateCrudeBirthRatesForYear(
-        location.name,
+        location.id,
         isCurrentYear ? currentYear - 1 : y,
         statistics
       )
@@ -298,17 +326,22 @@ async function main() {
       for (let d = days.length - 1; d >= 0; d--) {
         const submissionDate = addDays(startOfYear(setYear(new Date(), y)), d)
 
-        // create that number of birth and death applications for field agents & registration offices and notifications for hospitals
-        // “Application started” in performance management should show realistic proportions of applications started from the current types (e.g. Field Agents: 40%, Hospitals: 30%, Reg Offices: 30%)"
+        const concurrency = createConcurrentBuffer(CONCURRENCY)
 
-        // Add a dynamic range for declaration & birthday difference
-        // If this would just be a static number like 60, then and we run this script on Jan 1st 2022
-        // all of the days 60 days before would have a chance to be declared in a future time
+        /*
+         *
+         * DEATH DECLARATIONS
+         *
+         */
 
-        const concurrency = createConcurrentBuffer(1)
-
-        // Create death declarations
         const deathsToday = Math.round(totalDeathsThisYear / 365)
+
+        log(
+          'Creating death declarations for',
+          submissionDate,
+          'total:',
+          deathsToday
+        )
 
         for (let ix = 0; ix < deathsToday; ix++) {
           const randomUser =
@@ -328,7 +361,14 @@ async function main() {
             ]
           const id = await markDeathAsRegistered(randomRegistrar, compositionId)
           await markDeathAsCertified(randomRegistrar, id)
+          writeTimestamps.unshift(Date.now())
         }
+
+        /*
+         *
+         * BIRTH DECLARATIONS
+         *
+         */
 
         log(
           'Creating birth declarations for',
@@ -366,34 +406,55 @@ async function main() {
             const completionDays = getRandomFromBrackets(completionBrackets)
             const birthDate = sub(submissionTime, { days: completionDays })
 
+            const crvsOffice = crvsOffices.find(
+              ({ id }) => id === randomUser.primaryOfficeId
+            )
+
+            if (!crvsOffice) {
+              throw new Error(
+                `CRVS office was not found with the id ${randomUser.primaryOfficeId}`
+              )
+            }
+
+            const districtFacilities = healthFacilities.filter(
+              ({ partOf }) => partOf.split('/')[1] === location.id
+            )
+
+            if (districtFacilities.length === 0) {
+              throw new Error('Could not find any facilities for location')
+            }
+
+            const randomFacility =
+              districtFacilities[
+                Math.floor(Math.random() * districtFacilities.length)
+              ]
+
             const id = isHospitalUser
               ? await sendBirthNotification(
                   randomUser,
                   sex,
                   birthDate,
-                  randomUser.primaryOfficeId
+                  randomFacility
                 )
               : await createBirthDeclaration(
                   randomUser,
                   sex,
                   birthDate,
                   submissionTime,
-                  randomUser.primaryOfficeId
+                  location
                 )
 
             const registeredToday =
               differenceInDays(today, submissionTime) === 0
 
-            if (!isHospitalUser && !registeredToday) {
+            if (!registeredToday) {
               const registrationId = await markAsRegistered(randomRegistrar, id)
 
               await markAsCertified(randomRegistrar, registrationId)
-              await new Promise(resolve => setTimeout(resolve, 10000))
             } else {
-              log('Will not register or certify', {
-                isHospitalUser,
-                registeredToday
-              })
+              log(
+                'Will not register or certify because the declaration was added today'
+              )
             }
             writeTimestamps.unshift(Date.now())
           })

@@ -4,21 +4,23 @@ import { faker } from '@faker-js/faker'
 import { sub, differenceInDays, add, max } from 'date-fns'
 import { log } from './util'
 import { sendBirthNotification as sendBirthNotificationAsHospital } from './dhis2/features/notification/birth/handler'
-import { Location } from './location'
+import { Facility, Location } from './location'
 
 function randomWeightInGrams() {
   return Math.round(2.5 + 2 * Math.random() * 1000)
 }
 
 export async function sendBirthNotification(
-  { token }: User,
+  { username, token }: User,
   sex: 'male' | 'female',
   birthDate: Date,
-  location: string
+  location: Facility
 ) {
   const familyName = faker.name.lastName()
   const firstNames = faker.name.firstName()
-  return sendBirthNotificationAsHospital(token, {
+  const requestStart = Date.now()
+
+  const res = await sendBirthNotificationAsHospital(token, {
     dhis2_event: '1111',
     child: {
       first_names: firstNames,
@@ -42,8 +44,20 @@ export async function sendBirthNotification(
     phone_number:
       '+2607' + faker.datatype.number({ min: 10000000, max: 99999999 }), // Required!
     date_birth: birthDate.toISOString().split('T')[0],
-    place_of_birth: location
+    place_of_birth: location.id
   })
+  const requestEnd = Date.now()
+  log(
+    'Creating',
+    firstNames,
+    familyName,
+    'born',
+    birthDate.toISOString().split('T')[0],
+    'created by',
+    username,
+    `(took ${requestEnd - requestStart}ms)`
+  )
+  return res
 }
 
 export async function createBirthDeclaration(
@@ -51,7 +65,7 @@ export async function createBirthDeclaration(
   sex: 'male' | 'female',
   birthDate: Date,
   declarationTime: Date,
-  location: string
+  location: Location
 ) {
   const timeFilling = Math.round(100000 + Math.random() * 100000) // 100 - 200 seconds
   const familyName = faker.name.lastName()
@@ -107,7 +121,23 @@ export async function createBirthDeclaration(
           birthType: 'SINGLE',
           weightAtBirth: Math.round(2.5 + 2 * Math.random() * 10) / 10,
           eventLocation: {
-            _fhirID: location
+            address: {
+              country: 'FAR',
+              state: location.partOf.split('/')[1],
+              district: location.id,
+              city: faker.address.city(),
+              postalCode: faker.address.zipCode(),
+              line: [
+                faker.address.streetAddress(),
+                faker.address.zipCode(),
+                '',
+                '',
+                '',
+                '',
+                'URBAN'
+              ]
+            },
+            type: 'PRIVATE_HOME'
           },
           mother: {
             nationality: ['FAR'],
@@ -144,10 +174,20 @@ export async function createBirthDeclaration(
               },
               {
                 type: 'CURRENT',
-                line: ['', '', '', '', '', '', 'URBAN'],
                 country: 'FAR',
-                state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
-                district: 'd9437614-1cb2-4d70-b938-eb93c87a4310'
+                state: location.partOf.split('/')[1],
+                district: location.id,
+                city: faker.address.city(),
+                postalCode: faker.address.zipCode(),
+                line: [
+                  faker.address.streetAddress(),
+                  faker.address.zipCode(),
+                  '',
+                  '',
+                  '',
+                  '',
+                  'URBAN'
+                ]
               }
             ]
           }

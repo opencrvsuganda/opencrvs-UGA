@@ -26,7 +26,10 @@ import {
   AUTH_URL,
   COUNTRY_WIDE_CRUDE_DEATH_RATE
 } from '@countryconfig/constants'
-import { locationsHandler as farajalandLocationsHandler } from '@countryconfig/farajaland/features/administrative/handler'
+import {
+  locationsHandler as farajalandLocationsHandler,
+  statisticsHandler as farajalandStatisticsHandler
+} from '@countryconfig/farajaland/features/administrative/handler'
 import { facilitiesHandler as farajalandFacilitiesHandler } from '@countryconfig/farajaland/features/facilities/handler'
 import { definitionsHandler as farajalandDefinitionsHandler } from '@countryconfig/farajaland/features/definitions/handler'
 import { assetHandler as farajalandAssetHandler } from '@countryconfig/farajaland/features/assets/handler'

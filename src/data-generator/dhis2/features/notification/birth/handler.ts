@@ -17,7 +17,9 @@ import {
   createBirthComposition,
   createPresentAtEventObservation,
   getIDFromResponse,
-  createBirthWeightObservation
+  createBirthWeightObservation,
+  createWeightAtBirthObservation,
+  createAttendantAtBirthObservation
 } from '../../../features/fhir/service'
 import { postBundle, fetchFacilityById } from '../../../features/fhir/api'
 
@@ -53,7 +55,10 @@ export async function sendBirthNotification(
   if (contactNumber) {
     if (contactNumber.startsWith('26')) {
       contactNumber = `+${contactNumber}`
-    } else if (!contactNumber.startsWith('0')) {
+    } else if (
+      !contactNumber.startsWith('0') &&
+      !contactNumber.startsWith('+260')
+    ) {
       contactNumber = `+260${contactNumber}`
     }
   }
@@ -86,7 +91,7 @@ export async function sendBirthNotification(
     notification.father.last_name,
     'male',
     contactNumber,
-    null,
+    notification.mother.dob,
     null
   )
   if (!notification.place_of_birth) {
@@ -148,6 +153,8 @@ export async function sendBirthNotification(
     entries.push(birthWeightObservation)
   }
   entries.push(createPresentAtEventObservation(encounter.fullUrl, 'MOTHER'))
+  entries.push(createWeightAtBirthObservation(encounter.fullUrl))
+  entries.push(createAttendantAtBirthObservation(encounter.fullUrl))
 
   const bundle = createBundle(entries)
 
