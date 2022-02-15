@@ -41,11 +41,15 @@ import { DistrictStatistic, getStatistics } from './statistics'
 const USERNAME = 'emmanuel.mayuka'
 const PASSWORD = 'test'
 export const VERIFICATION_CODE = '000000'
+
+// Create 30 users for each location:
+// - 15 field agents, ten hospitals, four registration agents and one registrar
 const FIELD_AGENTS = 10
-const HOSPITAL_FIELD_AGENTS = 1
-const REGISTRATION_AGENTS = 1
-const LOCAL_REGISTRARS = 1
-const CONCURRENCY = 1
+const HOSPITAL_FIELD_AGENTS = 5
+const REGISTRATION_AGENTS = 5
+const LOCAL_REGISTRARS = 3
+
+const CONCURRENCY = 5
 const START_YEAR = 2021
 const END_YEAR = 2022
 
@@ -258,10 +262,6 @@ async function main() {
   log('Found', locations.length, 'locations')
   for (const location of locations) {
     log('Creating users for', location)
-
-    // Create 30 users for each location:
-    // - 15 field agents, ten hospitals, four registration agents and one registrar
-
     const users = await createUsers(token, location)
     const allUsers = [
       ...users.fieldAgents,

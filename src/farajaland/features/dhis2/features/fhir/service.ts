@@ -9,8 +9,6 @@
  * Copyright (C) The OpenCRVS Authors. OpenCRVS and the OpenCRVS
  * graphic logo are (registered/a) trademark(s) of Plan International.
  */
-import { FHIR_URL } from '@countryconfig/constants'
-import fetch from 'node-fetch'
 import { v4 as uuid } from 'uuid'
 
 export interface IIncomingAddress {

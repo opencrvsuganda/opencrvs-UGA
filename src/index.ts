@@ -41,6 +41,7 @@ import {
 import { farajalandValidateRegistrationHandler } from '@countryconfig/farajaland/features/validate/handler'
 
 import { join } from 'path'
+import { birthNotificationHandler } from './farajaland/features/dhis2/features/notification/birth/handler'
 
 const publicCert = readFileSync(CERT_PUBLIC_KEY_PATH)
 
@@ -256,6 +257,16 @@ export async function createServer() {
     options: {
       tags: ['api'],
       description: 'Serves current pilot location list'
+    }
+  })
+
+  server.route({
+    method: 'POST',
+    path: '/dhis2-notification/birth',
+    handler: birthNotificationHandler,
+    options: {
+      tags: ['api'],
+      description: 'Handles transformation and submission of birth notification'
     }
   })
 

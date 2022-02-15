@@ -21,6 +21,9 @@ import {
   createWeightAtBirthObservation,
   createAttendantAtBirthObservation
 } from '../../../features/fhir/service'
+
+import * as Hapi from '@hapi/hapi'
+
 import { postBundle, fetchFacilityById } from '../../../features/fhir/api'
 
 export interface IBirthNotification {
@@ -47,7 +50,17 @@ export interface IBirthNotification {
   place_of_birth: string
 }
 
-export async function sendBirthNotification(
+export async function birthNotificationHandler(
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit
+) {
+  return sendBirthNotification(
+    request.headers['Authorization'].split('Bearer')[1],
+    request.payload as IBirthNotification
+  )
+}
+
+async function sendBirthNotification(
   token: string,
   notification: IBirthNotification
 ) {

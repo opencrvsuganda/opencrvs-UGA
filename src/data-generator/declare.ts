@@ -3,8 +3,9 @@ import { User } from './auth'
 import { faker } from '@faker-js/faker'
 import { sub, differenceInDays, add, max } from 'date-fns'
 import { log } from './util'
-import { sendBirthNotification as sendBirthNotificationAsHospital } from './dhis2/features/notification/birth/handler'
+
 import { Facility, Location } from './location'
+import { COUNTRY_CONFIG_HOST } from './constants'
 
 function randomWeightInGrams() {
   return Math.round(2.5 + 2 * Math.random() * 1000)
@@ -20,32 +21,50 @@ export async function sendBirthNotification(
   const firstNames = faker.name.firstName()
   const requestStart = Date.now()
 
-  const res = await sendBirthNotificationAsHospital(token, {
-    dhis2_event: '1111',
-    child: {
-      first_names: firstNames,
-      last_name: familyName,
-      weight: randomWeightInGrams().toString(),
-      sex: sex
-    },
-    father: {
-      first_names: 'Dad',
-      last_name: familyName,
-      nid: faker.datatype.number({ min: 100000000, max: 999999999 }).toString()
-    },
-    mother: {
-      first_names: 'Mom',
-      last_name: familyName,
-      dob: sub(birthDate, { years: 20 })
-        .toISOString()
-        .split('T')[0],
-      nid: faker.datatype.number({ min: 100000000, max: 999999999 }).toString()
-    },
-    phone_number:
-      '+2607' + faker.datatype.number({ min: 10000000, max: 99999999 }), // Required!
-    date_birth: birthDate.toISOString().split('T')[0],
-    place_of_birth: location.id
-  })
+  const createBirthNotification = await fetch(
+    `${COUNTRY_CONFIG_HOST}/dhis2-notification/birth`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        'x-correlation': `birth-notification-${firstNames}-${familyName}`
+      },
+      body: JSON.stringify({
+        dhis2_event: '1111',
+        child: {
+          first_names: firstNames,
+          last_name: familyName,
+          weight: randomWeightInGrams().toString(),
+          sex: sex
+        },
+        father: {
+          first_names: 'Dad',
+          last_name: familyName,
+          nid: faker.datatype
+            .number({ min: 100000000, max: 999999999 })
+            .toString()
+        },
+        mother: {
+          first_names: 'Mom',
+          last_name: familyName,
+          dob: sub(birthDate, { years: 20 })
+            .toISOString()
+            .split('T')[0],
+          nid: faker.datatype
+            .number({ min: 100000000, max: 999999999 })
+            .toString()
+        },
+        phone_number:
+          '+2607' + faker.datatype.number({ min: 10000000, max: 99999999 }), // Required!
+        date_birth: birthDate.toISOString().split('T')[0],
+        place_of_birth: location.id
+      })
+    }
+  )
+
+  const res = await createBirthNotification.json()
+
   const requestEnd = Date.now()
   log(
     'Creating',
