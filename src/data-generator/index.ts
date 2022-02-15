@@ -169,12 +169,12 @@ function startThroughputTimer() {
 async function getCrudeDeathRate(token: string): Promise<number> {
   const res = await fetch(`${COUNTRY_CONFIG_HOST}/crude-death-rate`, {
     headers: {
-      Authentication: `Bearer ${token}`
+      Authorization: `Bearer ${token}`
     }
   })
+  const data = await res.json()
 
-  const { crudeDeathRate } = await res.json()
-  return crudeDeathRate
+  return data.crudeDeathRate
 }
 
 async function main() {
