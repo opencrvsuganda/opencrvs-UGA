@@ -54,10 +54,14 @@ export async function birthNotificationHandler(
   request: Hapi.Request,
   h: Hapi.ResponseToolkit
 ) {
-  return sendBirthNotification(
-    request.headers['Authorization'].split('Bearer')[1],
-    request.payload as IBirthNotification
-  )
+  const token = request.headers['authorization'].split('Bearer ')[1]
+
+  return {
+    compositionId: await sendBirthNotification(
+      token,
+      request.payload as IBirthNotification
+    )
+  }
 }
 
 async function sendBirthNotification(

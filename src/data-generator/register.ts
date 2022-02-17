@@ -1,19 +1,19 @@
 import fetch from 'node-fetch'
-import { User } from './auth'
-import { add } from 'date-fns'
+import { User } from './users'
+
 import { log, nullsToEmptyString } from './util'
 import { fetchRegistration, fetchDeathRegistration } from './declare'
+import faker from '@faker-js/faker'
+import { Location } from './location'
 
-export async function markAsRegistered(user: User, id: string) {
+export async function markAsRegistered(
+  user: User,
+  id: string,
+  createdAt: Date,
+  location: Location
+) {
   const { token, username } = user
   const declaration = await fetchRegistration(user, id)
-
-  const createdAt = add(
-    new Date(declaration.registration.status.pop().timestamp),
-    {
-      days: 1
-    }
-  )
 
   const MINUTES_15 = 1000 * 60 * 15
   const details = {
@@ -35,8 +35,9 @@ export async function markAsRegistered(user: User, id: string) {
       attachments: [],
       draftId: declaration.id
     },
-    presentAtBirthRegistration: declaration.presentAtBirthRegistration,
-    child: {
+    presentAtBirthRegistration:
+      declaration.presentAtBirthRegistration || 'BOTH_PARENTS',
+    child: declaration.child && {
       name: declaration.child.name,
       gender: declaration.child.gender,
       birthDate: declaration.child.birthDate,
@@ -46,12 +47,34 @@ export async function markAsRegistered(user: User, id: string) {
     // Hospital notifications have a limited set of data in them
     // This part amends the missing fields if needed
     birthType: declaration.birthType || 'SINGLE',
-    attendantAtBirth: declaration.attendantAtBirth,
-    weightAtBirth: declaration.weightAtBirth,
-    eventLocation: {
-      _fhirID: declaration._fhirIDMap.eventLocation
-    },
-    mother: {
+    weightAtBirth:
+      declaration.weightAtBirth ||
+      Math.round(2.5 + 2 * Math.random() * 10) / 10,
+    attendantAtBirth: declaration.attendantAtBirth || 'PHYSICIAN',
+    eventLocation: declaration._fhirIDMap?.eventLocation
+      ? {
+          _fhirID: declaration._fhirIDMap.eventLocation
+        }
+      : {
+          address: {
+            country: 'FAR',
+            state: location.partOf.split('/')[1],
+            district: location.id,
+            city: faker.address.city(),
+            postalCode: faker.address.zipCode(),
+            line: [
+              faker.address.streetAddress(),
+              faker.address.zipCode(),
+              '',
+              '',
+              '',
+              '',
+              'URBAN'
+            ]
+          },
+          type: 'CRVS_OFFICE'
+        },
+    mother: declaration.mother && {
       nationality: declaration.mother.nationality,
       identifier: declaration.mother.identifier,
       name: declaration.mother.name,
@@ -61,9 +84,9 @@ export async function markAsRegistered(user: User, id: string) {
     },
     _fhirIDMap: declaration._fhirIDMap
   }
-  delete declaration.registration.id
-  delete declaration.child.id
-  delete declaration.mother.id
+  delete declaration?.registration?.id
+  delete declaration?.child?.id
+  delete declaration?.mother?.id
 
   nullsToEmptyString(details)
 
@@ -92,6 +115,8 @@ export async function markAsRegistered(user: User, id: string) {
   const result = await reviewDeclarationRes.json()
   if (result.errors) {
     console.error(JSON.stringify(result.errors, null, 2))
+    console.error(JSON.stringify(declaration))
+    console.error(JSON.stringify(details))
     throw new Error('Birth declaration was not registered')
   }
 
@@ -105,16 +130,13 @@ export async function markAsRegistered(user: User, id: string) {
 
   return result.data.markBirthAsRegistered.id
 }
-export async function markDeathAsRegistered(user: User, id: string) {
+export async function markDeathAsRegistered(
+  user: User,
+  id: string,
+  createdAt: Date
+) {
   const { token, username } = user
   const declaration = await fetchDeathRegistration(user, id)
-
-  const createdAt = add(
-    new Date(declaration.registration.status.pop().timestamp),
-    {
-      days: 1
-    }
-  )
 
   const details = {
     createdAt: createdAt,
@@ -146,8 +168,8 @@ export async function markDeathAsRegistered(user: User, id: string) {
     mannerOfDeath: declaration.deceased.mannerOfDeath,
     eventLocation: declaration.eventLocation,
     causeOfDeath: declaration.deceased.causeOfDeath,
-    informant: {
-      individual: {
+    informant: declaration.informant && {
+      individual: declaration.informant.individual && {
         nationality: declaration.informant.individual.nationality,
         identifier: declaration.informant.individual.identifier,
         name: declaration.informant.individual.name,
@@ -167,13 +189,13 @@ export async function markDeathAsRegistered(user: User, id: string) {
     },
     _fhirIDMap: declaration._fhirIDMap
   }
-  delete declaration.registration.id
-  delete declaration.deceased.id
-  delete declaration.informant.id
-  delete declaration.father.id
-  delete declaration.mother.id
-  delete declaration.informant.individual.id
-  delete declaration.eventLocation.id
+  delete declaration?.registration?.id
+  delete declaration?.deceased?.id
+  delete declaration?.informant?.id
+  delete declaration?.father?.id
+  delete declaration?.mother?.id
+  delete declaration?.informant?.individual.id
+  delete declaration?.eventLocation?.id
 
   nullsToEmptyString(details)
 

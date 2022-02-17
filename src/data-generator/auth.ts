@@ -38,6 +38,8 @@ export async function getToken(
   const data = await verifyResponse.json()
 
   if (!data.token) {
+    console.log(data)
+
     throw new Error(
       `Failed to get token for user ${username}, password ${password}`
     )

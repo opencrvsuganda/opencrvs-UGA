@@ -97,12 +97,23 @@ export async function matchAndAssignStatisticalData(
         }`
       )
     } else {
-      const statisticalExtensions =
-        generateStatisticalExtensions(matchingStatistics)
+      const statisticalExtensions = generateStatisticalExtensions(
+        matchingStatistics
+      )
+
+      const statisticsKeys = statisticalExtensions.map(
+        extension => extension.url
+      )
+
       if (!location.extension) {
         location.extension = []
       }
-      location.extension = [...location.extension, ...statisticalExtensions]
+      location.extension = [
+        ...location.extension.filter(
+          ({ url }) => !statisticsKeys.includes(url)
+        ),
+        ...statisticalExtensions
+      ]
       locationsWithStatistics.push(location)
     }
   }

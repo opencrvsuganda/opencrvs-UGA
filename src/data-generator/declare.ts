@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { User } from './auth'
+import { User } from './users'
 import { faker } from '@faker-js/faker'
 import { sub, differenceInDays, add, max } from 'date-fns'
 import { log } from './util'
@@ -63,11 +63,15 @@ export async function sendBirthNotification(
     }
   )
 
+  if (!createBirthNotification.ok) {
+    throw new Error('Failed to create a birth notification')
+  }
+
   const res = await createBirthNotification.json()
 
   const requestEnd = Date.now()
   log(
-    'Creating',
+    'Creating birth notification',
     firstNames,
     familyName,
     'born',
@@ -76,7 +80,8 @@ export async function sendBirthNotification(
     username,
     `(took ${requestEnd - requestStart}ms)`
   )
-  return res
+
+  return res.compositionId
 }
 
 export async function createBirthDeclaration(

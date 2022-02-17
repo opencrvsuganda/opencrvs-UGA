@@ -1,22 +1,24 @@
 import fetch from 'node-fetch'
-import { User } from './auth'
-import { add } from 'date-fns'
+import { User } from './users'
+
 import { log, nullsToEmptyString } from './util'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { fetchRegistration, fetchDeathRegistration } from './declare'
+import { Location } from './location'
+import faker from '@faker-js/faker'
 
-export async function markAsCertified(user: User, id: string) {
+export async function markAsCertified(
+  user: User,
+  id: string,
+  location: Location,
+  createdAt: Date
+) {
   const { token, username } = user
   const declaration = await fetchRegistration(user, id)
 
   const requestStart = Date.now()
-  const createdAt = add(
-    new Date(declaration.registration.status.pop().timestamp),
-    {
-      days: 1
-    }
-  )
+
   const details = {
     createdAt,
     registration: {
@@ -54,21 +56,44 @@ export async function markAsCertified(user: User, id: string) {
       attachments: [],
       draftId: declaration.id
     },
-    presentAtBirthRegistration: declaration.presentAtBirthRegistration,
-    child: {
+    presentAtBirthRegistration:
+      declaration.presentAtBirthRegistration || 'BOTH_PARENTS',
+    child: declaration.child && {
       name: declaration.child.name,
       gender: declaration.child.gender,
       birthDate: declaration.child.birthDate,
       multipleBirth: declaration.child.multipleBirth,
       _fhirID: declaration.child.id
     },
-    attendantAtBirth: declaration.attendantAtBirth,
-    birthType: declaration.birthType,
-    weightAtBirth: declaration.weightAtBirth,
-    eventLocation: {
-      _fhirID: declaration._fhirIDMap.eventLocation
-    },
-    mother: {
+    attendantAtBirth: declaration.attendantAtBirth || 'PHYSICIAN',
+    birthType: declaration.birthType || 'SINGLE',
+    weightAtBirth:
+      declaration.weightAtBirth ||
+      Math.round(2.5 + 2 * Math.random() * 10) / 10,
+    eventLocation: declaration._fhirIDMap?.eventLocation
+      ? {
+          _fhirID: declaration._fhirIDMap.eventLocation
+        }
+      : {
+          address: {
+            country: 'FAR',
+            state: location.partOf.split('/')[1],
+            district: location.id,
+            city: faker.address.city(),
+            postalCode: faker.address.zipCode(),
+            line: [
+              faker.address.streetAddress(),
+              faker.address.zipCode(),
+              '',
+              '',
+              '',
+              '',
+              'URBAN'
+            ]
+          },
+          type: 'CRVS_OFFICE'
+        },
+    mother: declaration.mother && {
       nationality: declaration.mother.nationality,
       identifier: declaration.mother.identifier,
       name: declaration.mother.name,
@@ -76,12 +101,13 @@ export async function markAsCertified(user: User, id: string) {
       address: declaration.mother.address,
       _fhirID: declaration.mother.id
     },
-    _fhirIDMap: declaration._fhirIDMap
+    // TODO - in some cases _fhirIDMap is returned as null. Why is this?
+    _fhirIDMap: declaration._fhirIDMap || {}
   }
 
-  delete declaration.registration.id
-  delete declaration.child.id
-  delete declaration.mother.id
+  delete declaration?.registration?.id
+  delete declaration?.child?.id
+  delete declaration?.mother?.id
   nullsToEmptyString(details)
   const certifyDeclarationRes = await fetch('http://localhost:7070/graphql', {
     method: 'POST',
@@ -105,6 +131,13 @@ export async function markAsCertified(user: User, id: string) {
   const result = await certifyDeclarationRes.json()
   if (result.errors) {
     console.error(JSON.stringify(result.errors, null, 2))
+    console.error(JSON.stringify(declaration))
+
+    details.registration.certificates.forEach(cert => {
+      cert.data = 'REDACTED'
+    })
+
+    console.error(JSON.stringify(details))
     throw new Error('Birth declaration could not be certified')
   }
 
@@ -119,17 +152,15 @@ export async function markAsCertified(user: User, id: string) {
   return result.data.markBirthAsCertified
 }
 
-export async function markDeathAsCertified(user: User, id: string) {
+export async function markDeathAsCertified(
+  user: User,
+  id: string,
+  createdAt: Date
+) {
   const { token, username } = user
   const declaration = await fetchDeathRegistration(user, id)
 
   const requestStart = Date.now()
-  const createdAt = add(
-    new Date(declaration.registration.status.pop().timestamp),
-    {
-      days: 1
-    }
-  )
 
   const details = {
     createdAt: createdAt,
@@ -148,7 +179,7 @@ export async function markDeathAsCertified(user: User, id: string) {
         }
       ]
     },
-    deceased: {
+    deceased: declaration.deceased && {
       identifier: declaration.deceased.identifier,
       nationality: declaration.deceased.nationality,
       name: declaration.deceased.name,
@@ -162,8 +193,8 @@ export async function markDeathAsCertified(user: User, id: string) {
     mannerOfDeath: declaration.deceased.mannerOfDeath,
     eventLocation: declaration.eventLocation,
     causeOfDeath: declaration.deceased.causeOfDeath,
-    informant: {
-      individual: {
+    informant: declaration.informant && {
+      individual: declaration.informant.individual && {
         nationality: declaration.informant.individual.nationality,
         identifier: declaration.informant.individual.identifier,
         name: declaration.informant.individual.name,
@@ -173,23 +204,23 @@ export async function markDeathAsCertified(user: User, id: string) {
       relationship: declaration.informant.relationship,
       _fhirID: declaration.informant.id
     },
-    father: {
+    father: declaration.father && {
       name: declaration.father.name,
       _fhirID: declaration.father.id
     },
-    mother: {
+    mother: declaration.mother && {
       name: declaration.mother.name,
       _fhirID: declaration.mother.id
     },
     _fhirIDMap: declaration._fhirIDMap
   }
-  delete declaration.registration.id
-  delete declaration.deceased.id
-  delete declaration.informant.id
-  delete declaration.father.id
-  delete declaration.mother.id
-  delete declaration.informant.individual.id
-  delete declaration.eventLocation.id
+  delete declaration?.registration?.id
+  delete declaration?.deceased?.id
+  delete declaration?.informant?.id
+  delete declaration?.father?.id
+  delete declaration?.mother?.id
+  delete declaration?.informant?.individual?.id
+  delete declaration?.eventLocation?.id
 
   nullsToEmptyString(details)
 
@@ -215,6 +246,8 @@ export async function markDeathAsCertified(user: User, id: string) {
   const result = await certifyDeclarationRes.json()
   if (result.errors) {
     console.error(JSON.stringify(result.errors, null, 2))
+    console.error(JSON.stringify(declaration))
+    console.error(JSON.stringify(details))
     throw new Error('Death declaration could not be certified')
   }
 
