@@ -1,10 +1,23 @@
 import {
   createBirthDeclaration,
   createDeathDeclaration,
+  fetchDeathRegistration,
+  fetchRegistration,
   sendBirthNotification
 } from './declare'
-import { markAsRegistered, markDeathAsRegistered } from './register'
-import { markAsCertified, markDeathAsCertified } from './certify'
+import {
+  createRegistrationDetails,
+  createBirthRegistrationDetailsForNotification,
+  markAsRegistered,
+  markDeathAsRegistered
+} from './register'
+import {
+  createBirthCertificationDetails,
+  createDeathCertificationDetails,
+  markAsCertified,
+  markDeathAsCertified
+} from './certify'
+import { BirthRegistrationInput, DeathRegistrationInput } from './gateway'
 
 import fetch from 'node-fetch'
 
@@ -42,12 +55,12 @@ export const VERIFICATION_CODE = '000000'
 
 // Create 30 users for each location:
 // 15 field agents, ten hospitals, four registration agents and one registrar
-export const FIELD_AGENTS = 15
-export const HOSPITAL_FIELD_AGENTS = 10
+export const FIELD_AGENTS = 5
+export const HOSPITAL_FIELD_AGENTS = 5
 export const REGISTRATION_AGENTS = 4
 export const LOCAL_REGISTRARS = 1
 
-const CONCURRENCY = 1
+const CONCURRENCY = 5
 const START_YEAR = 2021
 const END_YEAR = 2022
 
@@ -259,7 +272,7 @@ async function main() {
       if (isCurrentYear) {
         // If we're processing the current year, only take into account
         // the days until today
-        const currentDayNumber = getDayOfYear(today) - 10
+        const currentDayNumber = getDayOfYear(today)
 
         // Remove future dates from the arrays
         days.splice(currentDayNumber - 1)
@@ -308,7 +321,6 @@ async function main() {
         for (let ix = 0; ix < deathsToday; ix++) {
           operations.push(
             (async (ix: number) => {
-              await new Promise(resolve => setTimeout(resolve, (ix % 5) * 2000))
               try {
                 const randomUser =
                   deathDeclarers[
@@ -317,6 +329,7 @@ async function main() {
                 const submissionTime = add(startOfDay(submissionDate), {
                   seconds: 24 * 60 * 60 * Math.random()
                 })
+                log('Declaring')
                 const compositionId = await createDeathDeclaration(
                   randomUser,
                   Math.random() > 0.4 ? 'male' : 'female',
@@ -328,20 +341,33 @@ async function main() {
                     Math.floor(Math.random() * users.registrars.length)
                   ]
                 log('Registering', { compositionId })
-                const id = await markDeathAsRegistered(
+
+                const declaration = await fetchDeathRegistration(
+                  randomRegistrar,
+                  compositionId
+                )
+
+                const registration = await markDeathAsRegistered(
                   randomRegistrar,
                   compositionId,
-                  add(new Date(submissionTime), {
-                    days: 1
-                  })
+                  createRegistrationDetails(
+                    add(new Date(submissionTime), {
+                      days: 1
+                    }),
+                    declaration
+                  ) as DeathRegistrationInput
                 )
-                log('Certifying', id)
+                log('Certifying', registration.id)
+
                 await markDeathAsCertified(
+                  registration.id,
                   randomRegistrar,
-                  id,
-                  add(new Date(submissionTime), {
-                    days: 2
-                  })
+                  createDeathCertificationDetails(
+                    add(new Date(submissionTime), {
+                      days: 2
+                    }),
+                    registration
+                  ) as DeathRegistrationInput
                 )
 
                 log('Death', submissionDate, ix, '/', deathsToday)
@@ -382,7 +408,6 @@ async function main() {
         for (let ix = 0; ix < Math.round(totalChildBirths); ix++) {
           operations.push(
             (async (ix: number) => {
-              await new Promise(resolve => setTimeout(resolve, (ix % 5) * 2000))
               try {
                 const randomUser =
                   birthDeclararers[
@@ -429,45 +454,80 @@ async function main() {
                     Math.floor(Math.random() * districtFacilities.length)
                   ]
 
-                if (isHospitalUser) {
-                  log('Sending a DHIS2 Hospital notification')
-                }
-                const id = isHospitalUser
-                  ? await sendBirthNotification(
-                      randomUser,
-                      sex,
-                      birthDate,
-                      randomFacility
-                    )
-                  : await createBirthDeclaration(
-                      randomUser,
-                      sex,
-                      birthDate,
-                      submissionTime,
-                      location
-                    )
-
-                const registeredToday =
+                const declaredToday =
                   differenceInDays(today, submissionTime) === 0
 
-                if (!registeredToday) {
-                  log('Registering', id)
-                  const registrationId = await markAsRegistered(
+                let id: string
+                let registrationDetails: any
+                if (isHospitalUser) {
+                  log('Sending a DHIS2 Hospital notification')
+                  id = await sendBirthNotification(
+                    randomUser,
+                    sex,
+                    birthDate,
+                    randomFacility
+                  )
+                  const declaration = await fetchRegistration(
                     randomRegistrar,
-                    id,
-                    add(new Date(submissionTime), {
-                      days: 1
-                    }),
+                    id
+                  )
+                  try {
+                    registrationDetails = await createBirthRegistrationDetailsForNotification(
+                      add(new Date(submissionTime), {
+                        days: 1
+                      }),
+                      location,
+                      declaration as any
+                    )
+                  } catch (error) {
+                    console.log(error)
+                    console.log(JSON.stringify(declaration))
+                    throw error
+                  }
+                } else {
+                  id = await createBirthDeclaration(
+                    randomUser,
+                    sex,
+                    birthDate,
+                    submissionTime,
                     location
                   )
+                  const declaration = await fetchRegistration(
+                    randomRegistrar,
+                    id
+                  )
+                  try {
+                    registrationDetails = await createRegistrationDetails(
+                      add(new Date(submissionTime), {
+                        days: 1
+                      }),
+                      declaration as any
+                    )
+                  } catch (error) {
+                    console.log(error)
+                    console.log(JSON.stringify(declaration))
+                    throw error
+                  }
+                  log('Registering', id)
+                }
+
+                const registration = await markAsRegistered(
+                  randomRegistrar,
+                  id,
+                  registrationDetails
+                )
+
+                if (!declaredToday) {
                   log('Certifying', id)
                   await markAsCertified(
+                    registration.id,
                     randomRegistrar,
-                    registrationId,
-                    location,
-                    add(new Date(submissionTime), {
-                      days: 2
-                    })
+                    createBirthCertificationDetails(
+                      add(new Date(submissionTime), {
+                        days: 1
+                      }),
+                      registrationDetails
+                    ) as BirthRegistrationInput
                   )
                 } else {
                   log(

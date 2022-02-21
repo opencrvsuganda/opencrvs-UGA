@@ -58,3 +58,9 @@ export function nullsToEmptyString(object: object) {
     }
   }
 }
+
+export type RecursiveRequired<T> = Required<
+  {
+    [P in keyof T]: Exclude<RecursiveRequired<T[P]>, null>
+  }
+>

@@ -117,8 +117,6 @@ export async function createUser(
   })
 
   if (res.status !== 200) {
-    console.log(res)
-
     throw new Error('Could not activate user')
   }
 
@@ -163,6 +161,7 @@ export async function getUsers(token: string, locationId: string) {
       `
     })
   })
+  console.log('got reply, loading data')
 
   const { data } = (await getUsersRes.json()) as {
     data: {
@@ -175,6 +174,7 @@ export async function getUsers(token: string, locationId: string) {
       }
     }
   }
+  console.log('data loaded')
 
   return data.searchUsers.results
 }
@@ -182,12 +182,9 @@ export async function getUsers(token: string, locationId: string) {
 export async function createSystemClient(
   token: string,
   officeId: string,
-  scope: 'HEALTH' | 'NATIONAL_ID' | 'EXTERNAL_VALIDATION' | 'AGE_CHECK'
+  scope: 'HEALTH' | 'NATIONAL_ID' | 'EXTERNAL_VALIDATION' | 'AGE_CHECK',
+  systemAdmin: User
 ): Promise<User> {
-  const systemAdmin = await createUser(token, officeId, {
-    role: 'LOCAL_SYSTEM_ADMIN'
-  })
-
   const createUserRes = await fetch(
     'http://localhost:3030/registerSystemClient',
     {
@@ -268,6 +265,19 @@ export async function createUsers(
       }))
   )
 
+  const systemAdmins: User[] = await Promise.all(
+    existingUsers
+      .filter(({ role }) => role === 'LOCAL_SYSTEM_ADMIN')
+      .map(async user => ({
+        username: user.username,
+        password: 'test',
+        token: await getToken(user.username, 'test'),
+        stillInUse: true,
+        primaryOfficeId: user.primaryOffice.id,
+        isSystemUser: false
+      }))
+  )
+
   // These cannot be fetched through gateway, so we'll always have to regenerate them
   const hospitals: User[] = []
 
@@ -288,9 +298,17 @@ export async function createUsers(
     )
   }
   log('Field agents created')
-  log('Creating hospitals')
+  log('Creating', config.hospitalFieldAgents, 'hospitals')
   for (let i = 0; i < config.hospitalFieldAgents; i++) {
-    hospitals.push(await createSystemClient(token, randomOffice.id, 'HEALTH'))
+    const systemAdmin =
+      systemAdmins[i] ||
+      (await createUser(token, randomOffice.id, {
+        role: 'LOCAL_SYSTEM_ADMIN'
+      }))
+
+    hospitals.push(
+      await createSystemClient(token, randomOffice.id, 'HEALTH', systemAdmin)
+    )
   }
 
   log('Hospitals created')

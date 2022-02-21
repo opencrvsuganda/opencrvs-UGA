@@ -293,29 +293,6 @@ export async function createPersonEntry(
             }
           ]
         : [],
-      address: [
-        {
-          type: 'PLACE_OF_HERITAGE',
-          line: ['', '', 'Chief name', '', '', ''],
-          district: '9cedaf28-8c0f-4d5f-b1c1-c96c437b0ba7',
-          state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
-          country: 'FAR'
-        },
-        {
-          type: 'PERMANENT',
-          line: ['', '', '', '', '', '', 'URBAN'],
-          district: 'd9437614-1cb2-4d70-b938-eb93c87a4310',
-          state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
-          country: 'FAR'
-        },
-        {
-          type: 'CURRENT',
-          line: ['', '', '', '', '', '', 'URBAN'],
-          district: 'd9437614-1cb2-4d70-b938-eb93c87a4310',
-          state: 'ec34cfe2-b566-4140-af22-71ff17d832d6',
-          country: 'FAR'
-        }
-      ],
       // Date values are expected to YYYY-MM-DD from DHIS2
       birthDate: birthDate,
       deceasedBoolean: !!deathDate,

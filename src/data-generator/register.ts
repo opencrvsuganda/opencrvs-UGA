@@ -1,27 +1,40 @@
 import fetch from 'node-fetch'
 import { User } from './users'
 
-import { log, nullsToEmptyString } from './util'
-import { fetchRegistration, fetchDeathRegistration } from './declare'
-import faker from '@faker-js/faker'
+import { log, RecursiveRequired } from './util'
+import { BIRTH_REGISTRATION_FIELDS, DEATH_REGISTRATION_FIELDS } from './declare'
 import { Location } from './location'
+import { createAddressInput } from './address'
+import {
+  AddressType,
+  AttendantType,
+  BirthRegistration,
+  BirthRegistrationInput,
+  BirthRegPresence,
+  BirthType,
+  DeathRegistration,
+  DeathRegistrationInput,
+  EducationType,
+  LocationType
+} from './gateway'
+import { get, omit, set } from 'lodash'
+import { sub } from 'date-fns'
 
-export async function markAsRegistered(
-  user: User,
-  id: string,
+// Hospital notifications have a limited set of data in them
+// This part amends the missing fields if needed
+export async function createBirthRegistrationDetailsForNotification(
   createdAt: Date,
-  location: Location
+  location: Location,
+  declaration: RecursiveRequired<BirthRegistration>
 ) {
-  const { token, username } = user
-  const declaration = await fetchRegistration(user, id)
-
   const MINUTES_15 = 1000 * 60 * 15
-  const details = {
+
+  return {
     createdAt,
     registration: {
       contact: declaration.registration.contact,
       contactPhoneNumber: declaration.registration.contactPhoneNumber,
-      contactRelationship: '',
+      contactRelationship: 'Mother',
       _fhirID: declaration.registration.id,
       trackingId: declaration.registration.trackingId,
       status: [
@@ -35,60 +48,107 @@ export async function markAsRegistered(
       attachments: [],
       draftId: declaration.id
     },
-    presentAtBirthRegistration:
-      declaration.presentAtBirthRegistration || 'BOTH_PARENTS',
-    child: declaration.child && {
+    presentAtBirthRegistration: BirthRegPresence.BothParents,
+    child: {
       name: declaration.child.name,
       gender: declaration.child.gender,
       birthDate: declaration.child.birthDate,
       multipleBirth: declaration.child.multipleBirth,
       _fhirID: declaration.child.id
     },
-    // Hospital notifications have a limited set of data in them
-    // This part amends the missing fields if needed
-    birthType: declaration.birthType || 'SINGLE',
-    weightAtBirth:
-      declaration.weightAtBirth ||
-      Math.round(2.5 + 2 * Math.random() * 10) / 10,
-    attendantAtBirth: declaration.attendantAtBirth || 'PHYSICIAN',
-    eventLocation: declaration._fhirIDMap?.eventLocation
-      ? {
-          _fhirID: declaration._fhirIDMap.eventLocation
-        }
-      : {
-          address: {
-            country: 'FAR',
-            state: location.partOf.split('/')[1],
-            district: location.id,
-            city: faker.address.city(),
-            postalCode: faker.address.zipCode(),
-            line: [
-              faker.address.streetAddress(),
-              faker.address.zipCode(),
-              '',
-              '',
-              '',
-              '',
-              'URBAN'
-            ]
-          },
-          type: 'CRVS_OFFICE'
-        },
-    mother: declaration.mother && {
-      nationality: declaration.mother.nationality,
+    birthType: BirthType.Single,
+    weightAtBirth: Math.round(2.5 + 2 * Math.random() * 10) / 10,
+    attendantAtBirth: AttendantType.Physician,
+    eventLocation: {
+      address: createAddressInput(location, AddressType.CrvsOffice),
+      type: LocationType.CrvsOffice
+    },
+    mother: {
+      nationality: 'FAR',
       identifier: declaration.mother.identifier,
       name: declaration.mother.name,
+      occupation: 'Bookkeeper',
+      educationalAttainment: EducationType.LowerSecondaryIsced_2,
+      dateOfMarriage: sub(new Date(declaration.child.birthDate), { years: 2 })
+        .toISOString()
+        .split('T')[0],
       maritalStatus: declaration.mother.maritalStatus,
-      address: declaration.mother.address,
+      address: createAddressInput(location, AddressType.PrivateHome),
       _fhirID: declaration.mother.id
     },
     _fhirIDMap: declaration._fhirIDMap
   }
-  delete declaration?.registration?.id
-  delete declaration?.child?.id
-  delete declaration?.mother?.id
+}
 
-  nullsToEmptyString(details)
+function IdsToFHIRIds(target: Record<string, any>, keys: string[]) {
+  return keys.reduce((memo, key) => {
+    const value = get(memo, key)
+
+    if (value === undefined) {
+      return memo
+    }
+
+    const fhirKey = key
+      .split('.')
+      .slice(0, -1)
+      .concat('_fhirID')
+      .join('.')
+    return set(set(memo, fhirKey, value), key, undefined)
+  }, target)
+}
+
+// Cleans unnecessary fields from declaration data to make it an input type
+export function createRegistrationDetails(
+  createdAt: Date,
+  declaration: BirthRegistration | DeathRegistration
+) {
+  const MINUTES_15 = 1000 * 60 * 15
+  // console.log('got', JSON.stringify(declaration))
+
+  const withIdsRemoved = omit(
+    IdsToFHIRIds(declaration, [
+      'registration.id',
+      'child.id',
+      'mother.id',
+      'father.id',
+      'eventLocation.id',
+      'informant.id',
+      'informant.individual.id',
+      'deceased.id'
+    ]),
+    ['registration.registrationNumber', 'registration.type']
+  )
+
+  delete withIdsRemoved.id
+
+  const data = {
+    ...withIdsRemoved,
+    eventLocation: {
+      _fhirID: withIdsRemoved.eventLocation._fhirID
+    },
+    registration: {
+      ...withIdsRemoved.registration,
+      status: [
+        {
+          // This is needed to avoid the following error from Metrics service:
+          // Error: No time logged extension found in task, task ID: 93c59687-b3d1-4d58-91c3-6888f1987f2a
+          timeLoggedMS: Math.round(MINUTES_15 + MINUTES_15 * Math.random()),
+          timestamp: createdAt.toISOString()
+        }
+      ]
+    }
+  }
+  // console.log('made', JSON.stringify(data))
+
+  return data
+}
+
+export async function markAsRegistered(
+  user: User,
+  id: string,
+  details: BirthRegistrationInput
+) {
+  const { token, username } = user
 
   const requestStart = Date.now()
   const reviewDeclarationRes = await fetch('http://localhost:7070/graphql', {
@@ -102,7 +162,7 @@ export async function markAsRegistered(
       query: `
         mutation submitMutation($id: ID!, $details: BirthRegistrationInput) {
           markBirthAsRegistered(id: $id, details: $details) {
-            id
+            ${BIRTH_REGISTRATION_FIELDS}
         }
       }`,
       variables: {
@@ -115,89 +175,27 @@ export async function markAsRegistered(
   const result = await reviewDeclarationRes.json()
   if (result.errors) {
     console.error(JSON.stringify(result.errors, null, 2))
-    console.error(JSON.stringify(declaration))
     console.error(JSON.stringify(details))
     throw new Error('Birth declaration was not registered')
   }
+  const data = result.data.markBirthAsRegistered as BirthRegistration
 
   log(
     'Declaration',
-    result.data.markBirthAsRegistered.id,
+    data.id,
     'is now reviewed by',
     username,
     `(took ${requestEnd - requestStart}ms)`
   )
 
-  return result.data.markBirthAsRegistered.id
+  return data
 }
 export async function markDeathAsRegistered(
   user: User,
   id: string,
-  createdAt: Date
+  details: DeathRegistrationInput
 ) {
   const { token, username } = user
-  const declaration = await fetchDeathRegistration(user, id)
-
-  const details = {
-    createdAt: createdAt,
-    registration: {
-      contact: declaration.registration.contact,
-      contactPhoneNumber: declaration.registration.contactPhoneNumber,
-      contactRelationship: '',
-      _fhirID: declaration.registration.id,
-      trackingId: declaration.registration.trackingId,
-      attachments: [],
-      draftId: declaration.id,
-      status: [
-        {
-          timeLoggedMS: Math.round(9999 * Math.random())
-        }
-      ]
-    },
-    deceased: {
-      identifier: declaration.deceased.identifier,
-      nationality: declaration.deceased.nationality,
-      name: declaration.deceased.name,
-      birthDate: declaration.deceased.birthDate,
-      gender: declaration.deceased.gender,
-      maritalStatus: declaration.deceased.maritalStatus,
-      address: declaration.deceased.address,
-      _fhirID: declaration.deceased.id,
-      deceased: declaration.deceased.deceased
-    },
-    mannerOfDeath: declaration.deceased.mannerOfDeath,
-    eventLocation: declaration.eventLocation,
-    causeOfDeath: declaration.deceased.causeOfDeath,
-    informant: declaration.informant && {
-      individual: declaration.informant.individual && {
-        nationality: declaration.informant.individual.nationality,
-        identifier: declaration.informant.individual.identifier,
-        name: declaration.informant.individual.name,
-        address: declaration.informant.individual.address,
-        _fhirID: declaration.informant.individual.id
-      },
-      relationship: declaration.informant.relationship,
-      _fhirID: declaration.informant.id
-    },
-    father: {
-      name: declaration.father.name,
-      _fhirID: declaration.father.id
-    },
-    mother: {
-      name: declaration.mother.name,
-      _fhirID: declaration.mother.id
-    },
-    _fhirIDMap: declaration._fhirIDMap
-  }
-  delete declaration?.registration?.id
-  delete declaration?.deceased?.id
-  delete declaration?.informant?.id
-  delete declaration?.father?.id
-  delete declaration?.mother?.id
-  delete declaration?.informant?.individual.id
-  delete declaration?.eventLocation?.id
-
-  nullsToEmptyString(details)
 
   const requestStart = Date.now()
   const reviewDeclarationRes = await fetch('http://localhost:7070/graphql', {
@@ -211,44 +209,9 @@ export async function markDeathAsRegistered(
       query: `
       mutation submitMutation($id: ID!, $details: DeathRegistrationInput) {
         markDeathAsRegistered(id: $id, details: $details) {
-          id
-          registration {
-            id
-            status {
-              id
-              user {
-                id
-                name {
-                  use
-                  firstNames
-                  familyName
-                }
-              role
-            }
-            location {
-                id
-                name
-                alias
-              }
-            office {
-                name
-                alias
-                address {
-                  district
-                  state
-                }
-            }
-            type
-            timestamp
-            comments {
-                comment
-              }
-          }
+          ${DEATH_REGISTRATION_FIELDS}
         }
-      }
-    }
-
-  `,
+      }`,
       variables: {
         id,
         details
@@ -259,16 +222,18 @@ export async function markDeathAsRegistered(
   const result = await reviewDeclarationRes.json()
   if (result.errors) {
     console.error(JSON.stringify(result.errors, null, 2))
+    console.error(JSON.stringify(details))
+
     throw new Error('Death declaration was not registered')
   }
-
+  const data = result.data.markDeathAsRegistered as DeathRegistration
   log(
     'Declaration',
-    result.data.markDeathAsRegistered.id,
+    data.id,
     'is now reviewed by',
     username,
     `(took ${requestEnd - requestStart}ms)`
   )
 
-  return result.data.markDeathAsRegistered.id
+  return data
 }
