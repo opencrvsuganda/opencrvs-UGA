@@ -18,12 +18,40 @@ export async function sendBirthNotification(
   { username, token }: User,
   sex: 'male' | 'female',
   birthDate: Date,
+  createdAt: Date,
   location: Facility
 ) {
   const familyName = faker.name.lastName()
   const firstNames = faker.name.firstName()
   const requestStart = Date.now()
 
+  const notification = {
+    created_at: createdAt,
+    dhis2_event: '1111',
+    child: {
+      first_names: firstNames,
+      last_name: familyName,
+      weight: randomWeightInGrams().toString(),
+      sex: sex
+    },
+    father: {
+      first_names: 'Dad',
+      last_name: familyName,
+      nid: faker.datatype.number({ min: 100000000, max: 999999999 }).toString()
+    },
+    mother: {
+      first_names: 'Mom',
+      last_name: familyName,
+      dob: sub(birthDate, { years: 20 })
+        .toISOString()
+        .split('T')[0],
+      nid: faker.datatype.number({ min: 100000000, max: 999999999 }).toString()
+    },
+    phone_number:
+      '+2607' + faker.datatype.number({ min: 10000000, max: 99999999 }),
+    date_birth: birthDate.toISOString().split('T')[0],
+    place_of_birth: location.id
+  }
   const createBirthNotification = await fetch(
     `${COUNTRY_CONFIG_HOST}/dhis2-notification/birth`,
     {
@@ -33,36 +61,7 @@ export async function sendBirthNotification(
         Authorization: `Bearer ${token}`,
         'x-correlation': `birth-notification-${firstNames}-${familyName}`
       },
-      body: JSON.stringify({
-        dhis2_event: '1111',
-        child: {
-          first_names: firstNames,
-          last_name: familyName,
-          weight: randomWeightInGrams().toString(),
-          sex: sex
-        },
-        father: {
-          first_names: 'Dad',
-          last_name: familyName,
-          nid: faker.datatype
-            .number({ min: 100000000, max: 999999999 })
-            .toString()
-        },
-        mother: {
-          first_names: 'Mom',
-          last_name: familyName,
-          dob: sub(birthDate, { years: 20 })
-            .toISOString()
-            .split('T')[0],
-          nid: faker.datatype
-            .number({ min: 100000000, max: 999999999 })
-            .toString()
-        },
-        phone_number:
-          '+2607' + faker.datatype.number({ min: 10000000, max: 99999999 }), // Required!
-        date_birth: birthDate.toISOString().split('T')[0],
-        place_of_birth: location.id
-      })
+      body: JSON.stringify(notification)
     }
   )
 
