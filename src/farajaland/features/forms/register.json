@@ -2232,7 +2232,7 @@
                   "validate": [
                     {
                       "operation": "validIDNumber",
-                      "parameters":["NATIONAL_ID"]
+                      "parameters": ["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -2416,7 +2416,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "countryPermanent"
+                    "dependency": "countryPermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -2467,7 +2468,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "statePermanent"
+                    "dependency": "statePermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -3998,7 +4000,7 @@
                   "validate": [
                     {
                       "operation": "validIDNumber",
-                      "parameters":["NATIONAL_ID"]
+                      "parameters": ["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -4333,7 +4335,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "countryPlaceOfHeritage"
+                    "dependency": "countryPlaceOfHeritage",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -4375,7 +4378,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "statePlaceOfHeritage"
+                    "dependency": "statePlaceOfHeritage",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -4832,7 +4836,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "countryPermanent"
+                    "dependency": "countryPermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -4874,7 +4879,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "statePermanent"
+                    "dependency": "statePermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -5608,7 +5614,8 @@
                   "validate": [],
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "country"
+                    "dependency": "country",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -5654,7 +5661,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "state"
+                    "dependency": "state",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -6460,7 +6468,7 @@
                   "validate": [
                     {
                       "operation": "validIDNumber",
-                      "parameters":["NATIONAL_ID"]
+                      "parameters": ["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [
@@ -6958,7 +6966,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "countryPermanent"
+                    "dependency": "countryPermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -7008,7 +7017,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "statePermanent"
+                    "dependency": "statePermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -8692,7 +8702,7 @@
                   "validate": [
                     {
                       "operation": "validIDNumber",
-                      "parameters":["NATIONAL_ID"]
+                      "parameters": ["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -9041,7 +9051,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "countryPermanent"
+                    "dependency": "countryPermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -9083,7 +9094,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "statePermanent"
+                    "dependency": "statePermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -9977,7 +9989,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "country"
+                    "dependency": "country",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -10032,7 +10045,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "state"
+                    "dependency": "state",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -10802,7 +10816,7 @@
                   "validate": [
                     {
                       "operation": "validIDNumber",
-                      "parameters":["NATIONAL_ID"]
+                      "parameters": ["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -11147,7 +11161,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "countryPermanent"
+                    "dependency": "countryPermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
@@ -11202,7 +11217,8 @@
                   },
                   "dynamicOptions": {
                     "resource": "locations",
-                    "dependency": "statePermanent"
+                    "dependency": "statePermanent",
+                    "initialValue": "agentDefault"
                   },
                   "conditionals": [
                     {
