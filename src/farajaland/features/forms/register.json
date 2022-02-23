@@ -2231,11 +2231,8 @@
                   "initialValue": "",
                   "validate": [
                     {
-                      "operation": "numeric"
-                    },
-                    {
-                      "operation": "validLength",
-                      "parameters": [9]
+                      "operation": "validIDNumber",
+                      "parameters":["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -3627,6 +3624,7 @@
                         "initialValue": "",
                         "validate": [],
                         "required": true,
+                        "maxLength": 32,
                         "mapping": {
                           "mutation": {
                             "operation": "nestedRadioFieldTransformer",
@@ -3764,6 +3762,7 @@
                         },
                         "initialValue": "",
                         "required": true,
+                        "maxLength": 32,
                         "validate": [],
                         "mapping": {
                           "mutation": {
@@ -3998,11 +3997,8 @@
                   "initialValue": "",
                   "validate": [
                     {
-                      "operation": "numeric"
-                    },
-                    {
-                      "operation": "validLength",
-                      "parameters": [9]
+                      "operation": "validIDNumber",
+                      "parameters":["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -6463,11 +6459,8 @@
                   "initialValue": "",
                   "validate": [
                     {
-                      "operation": "numeric"
-                    },
-                    {
-                      "operation": "validLength",
-                      "parameters": [9]
+                      "operation": "validIDNumber",
+                      "parameters":["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [
@@ -8698,11 +8691,8 @@
                   "initialValue": "",
                   "validate": [
                     {
-                      "operation": "numeric"
-                    },
-                    {
-                      "operation": "validLength",
-                      "parameters": [9]
+                      "operation": "validIDNumber",
+                      "parameters":["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -10811,11 +10801,8 @@
                   "initialValue": "",
                   "validate": [
                     {
-                      "operation": "numeric"
-                    },
-                    {
-                      "operation": "validLength",
-                      "parameters": [9]
+                      "operation": "validIDNumber",
+                      "parameters":["NATIONAL_ID"]
                     }
                   ],
                   "conditionals": [],
@@ -12102,6 +12089,7 @@
                     "id": "form.field.label.deceasedMothersGivenNamesEng"
                   },
                   "required": false,
+                  "maxLength": 32,
                   "initialValue": "",
                   "validate": [
                     {
@@ -12129,6 +12117,7 @@
                     "id": "form.field.label.deceasedMothersFamilyNameEng"
                   },
                   "required": true,
+                  "maxLength": 32,
                   "initialValue": "",
                   "validate": [
                     {
