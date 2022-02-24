@@ -3938,6 +3938,7 @@
         {
           "id": "mother",
           "viewType": "form",
+          "replaceable": true,
           "name": {
             "defaultMessage": "Mother",
             "description": "Form section name for Mother",
@@ -6392,6 +6393,7 @@
         {
           "id": "father",
           "viewType": "form",
+          "replaceable": true,
           "name": {
             "defaultMessage": "Father",
             "description": "Form section name for Father",
@@ -12011,6 +12013,7 @@
                     "description": "Label for form field: Given names in english",
                     "id": "form.field.label.deceasedFathersGivenNamesEng"
                   },
+                  "maxLength": 32,
                   "required": false,
                   "initialValue": "",
                   "validate": [
@@ -12040,6 +12043,7 @@
                   },
                   "required": true,
                   "initialValue": "",
+                  "maxLength": 32,
                   "validate": [
                     {
                       "operation": "englishOnlyNameFormat"
@@ -12227,6 +12231,7 @@
                           "description": "Label for form field: Given names in english",
                           "id": "form.field.label.deceasedSpousesGivenNamesEng"
                         },
+                        "maxLength": 32,
                         "required": false,
                         "initialValue": "",
                         "extraValue": "Yes",
@@ -12265,6 +12270,7 @@
                           "description": "Label for form field: Family name in english",
                           "id": "form.field.label.deceasedSpousesFamilyNameEng"
                         },
+                        "maxLength": 32,
                         "required": true,
                         "initialValue": "",
                         "extraValue": "Yes",
