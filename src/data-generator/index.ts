@@ -60,16 +60,24 @@ export const HOSPITAL_FIELD_AGENTS = 10
 export const REGISTRATION_AGENTS = 4
 export const LOCAL_REGISTRARS = 1
 
-const CONCURRENCY = 5
+const CONCURRENCY = 3
 const START_YEAR = 2018
 const END_YEAR = 2022
 
-const completionBrackets = [
-  { range: [0, 44], weight: 0.3 },
-  { range: [45, 365], weight: 0.3 },
-  { range: [365, 365 * 5], weight: 0.2 },
-  { range: [365 * 5, 365 * 20], weight: 0.2 }
+const BIRTH_COMPLETION_DISTRIBUTION = [
+  { range: [0, 44], weight: 0.7 },
+  { range: [45, 365], weight: 0.2 },
+  { range: [365, 365 * 5], weight: 0.05 },
+  { range: [365 * 5, 365 * 20], weight: 0.05 }
 ]
+const BIRTH_OVERALL_REGISTRATIONS_COMPARED_TO_ESTIMATE = 0.8
+
+const DEATH_COMPLETION_DISTRIBUTION = [
+  { range: [0, 44], weight: 0.75 },
+  { range: [45, 365], weight: 0.125 },
+  { range: [365, 365 * 5], weight: 0.125 }
+]
+const DEATH_OVERALL_REGISTRATIONS_COMPARED_TO_ESTIMATE = 0.4
 
 const today = new Date()
 const currentYear = today.getFullYear()
@@ -253,12 +261,13 @@ async function main() {
 
     for (let y = END_YEAR; y >= START_YEAR; y--) {
       const isCurrentYear = y === currentYear
-      const totalDeathsThisYear = calculateCrudeDeathRateForYear(
-        location.id,
-        isCurrentYear ? currentYear - 1 : y,
-        crudeDeathRate,
-        statistics
-      )
+      const totalDeathsThisYear =
+        calculateCrudeDeathRateForYear(
+          location.id,
+          isCurrentYear ? currentYear - 1 : y,
+          crudeDeathRate,
+          statistics
+        ) * DEATH_OVERALL_REGISTRATIONS_COMPARED_TO_ESTIMATE
 
       // Calculate crude birth & death rates for this district for both men and women
       const birthRates = calculateCrudeBirthRatesForYear(
@@ -268,6 +277,11 @@ async function main() {
       )
 
       const days = Array.from({ length: getDaysInYear(y) }).map(() => 0)
+
+      birthRates.female =
+        birthRates.female * BIRTH_OVERALL_REGISTRATIONS_COMPARED_TO_ESTIMATE
+      birthRates.male =
+        birthRates.male * BIRTH_OVERALL_REGISTRATIONS_COMPARED_TO_ESTIMATE
 
       if (isCurrentYear) {
         // If we're processing the current year, only take into account
@@ -326,12 +340,17 @@ async function main() {
                   deathDeclarers[
                     Math.floor(Math.random() * deathDeclarers.length)
                   ]
+                const completionDays = getRandomFromBrackets(
+                  DEATH_COMPLETION_DISTRIBUTION
+                )
                 const submissionTime = add(startOfDay(submissionDate), {
                   seconds: 24 * 60 * 60 * Math.random()
                 })
+                const deathTime = sub(submissionTime, { days: completionDays })
                 log('Declaring')
                 const compositionId = await createDeathDeclaration(
                   randomUser,
+                  deathTime,
                   Math.random() > 0.4 ? 'male' : 'female',
                   submissionTime,
                   location
@@ -428,7 +447,9 @@ async function main() {
                 const submissionTime = add(startOfDay(submissionDate), {
                   seconds: 24 * 60 * 60 * Math.random()
                 })
-                const completionDays = getRandomFromBrackets(completionBrackets)
+                const completionDays = getRandomFromBrackets(
+                  BIRTH_COMPLETION_DISTRIBUTION
+                )
                 const birthDate = sub(submissionTime, { days: completionDays })
 
                 const crvsOffice = crvsOffices.find(

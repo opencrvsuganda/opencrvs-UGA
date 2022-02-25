@@ -218,6 +218,7 @@ export async function createBirthDeclaration(
 
 export async function createDeathDeclaration(
   { username, token }: User,
+  deathTime: Date,
   sex: 'male' | 'female',
   declarationTime: Date,
   location: Location
@@ -227,11 +228,8 @@ export async function createDeathDeclaration(
 
   const requestStart = Date.now()
 
-  const birthDate = sub(declarationTime, { days: Math.random() * 365 * 20 })
-  const deathDay = max([
-    add(birthDate, { days: 2 }),
-    sub(declarationTime, { days: Math.random() * 20 })
-  ])
+  const birthDate = sub(deathTime, { years: Math.random() * 100 })
+  const deathDay = deathTime
   const timeFilling = Math.round(100000 + Math.random() * 100000) // 100 - 200 seconds
   const details = {
     createdAt: declarationTime.toISOString(),
