@@ -1343,5 +1343,21 @@
   "configCertificateUploadCertificateDialogTitle": "config.certificate.uploadCertificateDialogTitle",
   "configCertificateUploadCertificateDialogDescription": "config.certificate.uploadCertificateDialogDescription",
   "configCertificateUploadCertificateDialogConfirm": "config.certificate.uploadCertificateDialogConfirm",
-  "configCertificateUploadCertificateDialogCancel": "config.certificate.uploadCertificateDialogCancel"
+  "configCertificateUploadCertificateDialogCancel": "config.certificate.uploadCertificateDialogCancel",
+  "configApplicationApplicationNameLabel": "config.application.applicationNameLabel",
+  "configApplicationGovermentLogoLabel": "config.application.govermentLogoLabel",
+  "configApplicationUserTimeoutLabel": "config.application.userTimeoutLabel",
+  "configApplicationCurrencyLable": "config.application.currencyLable",
+  "configApplicationPhoneNumberLabel": "config.application.phoneNumberLabel",
+  "configApplicationLogrocketLabel": "config.application.logrocketLabel",
+  "configApplicationSentryLabel": "config.application.sentryLabel",
+  "configApplicationLegallySpecifiedLabel": "config.application.legallySpecifiedLabel",
+  "configApplicationLateRegistrationLabel": "config.application.lateRegistrationLabel",
+  "configApplicationDelayedRegistrationLabel": "config.application.delayedRegistrationLabel",
+  "configApplicationWithinLegallySpecifiedTimeLabel": "config.application.withinLegallySpecifiedTimeLabel",
+  "configApplicationGeneralTabTitle": "config.application.generalTabTitle",
+  "configApplicationBirthTabTitle": "config.application.birthTabTitle",
+  "configApplicationDeathTabTitle": "config.application.deathTabTitle",
+  "configApplicationPhoneNumberPatternLabel": "config.application.phoneNumberPatternLabel",
+  "configApplicationPhoneNumberExampleLabel": "config.application.phoneNumberExampleLabel"
 }
