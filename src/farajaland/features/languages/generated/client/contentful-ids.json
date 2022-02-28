@@ -1345,6 +1345,8 @@
   "configCertificateUploadCertificateDialogConfirm": "config.certificate.uploadCertificateDialogConfirm",
   "configCertificateUploadCertificateDialogCancel": "config.certificate.uploadCertificateDialogCancel",
   "configApplicationApplicationNameLabel": "config.application.applicationNameLabel",
+  "configApplicationNameChangeMessage": "config.application.nameChangeMessag",
+  "configApplicationNameChangeError": "config.application.NameChangeError",
   "configApplicationGovermentLogoLabel": "config.application.govermentLogoLabel",
   "configApplicationUserTimeoutLabel": "config.application.userTimeoutLabel",
   "configApplicationCurrencyLable": "config.application.currencyLable",

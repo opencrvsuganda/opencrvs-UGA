@@ -1098,6 +1098,8 @@
         "config.listDetailsQsn": "How to configure a certificate?",
         "config.deathUpdatedTempDesc": "Updated {deathLongDate}",
         "config.application.applicationNameLabel": "Name of application",
+        "config.application.nameChangeMessage": "Choose a name for your CRVS system",
+        "config.application.nameChangeError": "Unable to make change. Please try again",
         "config.application.govermentLogoLabel": "Goverment logo",
         "config.application.userTimeoutLabel": "User timeout",
         "config.application.currencyLable": "Currency",
