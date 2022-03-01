@@ -28,8 +28,8 @@ context('User Integration Test', () => {
     cy.get('#reason_OTHER').click()
     cy.get('#comment').type('not a member now')
     cy.get('#deactivate-action').click()
-    // cy.contains('State Registrar').should('be.visible')
-    // cy.get('#row_8').should('have.text','Active')
+    cy.contains('State Registrar').should('be.visible')
+    cy.get('#row_8').should('have.text','Active')
        
   })
   it.only('Tests admin can reactivate an user', () => {
