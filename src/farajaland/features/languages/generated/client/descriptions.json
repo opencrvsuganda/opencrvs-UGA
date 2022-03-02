@@ -787,6 +787,7 @@
     "config.application.deathTabTitle": "The title for death tab",
     "config.application.phoneNumberPatternLabel": "Label for phone number pattern config",
     "config.application.phoneNumberExampleLabel": "Label for phone number example config",
+    "config.application.applicationNameChangeNotification": "Application name change notification messages",
     "settings.changePhone": "Change phone number title",
     "settings.verifyPhone": "Verify phone number title"
   }

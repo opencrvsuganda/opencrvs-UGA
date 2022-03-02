@@ -1361,5 +1361,6 @@
   "configApplicationBirthTabTitle": "config.application.birthTabTitle",
   "configApplicationDeathTabTitle": "config.application.deathTabTitle",
   "configApplicationPhoneNumberPatternLabel": "config.application.phoneNumberPatternLabel",
-  "configApplicationPhoneNumberExampleLabel": "config.application.phoneNumberExampleLabel"
+  "configApplicationPhoneNumberExampleLabel": "config.application.phoneNumberExampleLabel",
+  "configApplicationApplicationNameChangeNotification": "config.application.applicationNameChangeNotification"
 }

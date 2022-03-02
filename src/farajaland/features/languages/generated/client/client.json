@@ -1115,6 +1115,7 @@
         "config.application.deathTabTitle": "Death",
         "config.application.phoneNumberPatternLabel": "pattern: {pattern}",
         "config.application.phoneNumberExampleLabel": "example: {example}",
+        "config.application.applicationNameChangeNotification": "Name of application updated",
         "config.certificate.certificateUploading": "Uploading and validating {eventName} certificate.",
         "config.certificate.certificateUpdated": "{eventName} certificate has been updated",
         "config.certificate.certificateValidationError": "Unable to read SVG. Please check",
