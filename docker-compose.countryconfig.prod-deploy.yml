@@ -48,6 +48,16 @@ services:
     environment:
       - LANGUAGES=en
 
+  auth:
+    environment:
+      - QA_ENV=true
+      - NODE_ENV=production
+
+  user-mgnt:
+    environment:
+      - QA_ENV=true
+      - NODE_ENV=production
+
 secrets:
   jwt-public-key.{{ts}}:
     external: true
@@ -60,6 +70,4 @@ secrets:
   clickatell-password:
     external: true
   clickatell-api-id:
-    external: true
-  telegram-api-key:
     external: true
