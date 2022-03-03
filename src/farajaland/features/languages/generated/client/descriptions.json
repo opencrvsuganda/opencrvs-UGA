@@ -858,6 +858,8 @@
     "config.application.generalTabTitle": "The title for general tab",
     "config.application.birthTabTitle": "The title for birth tab",
     "config.application.deathTabTitle": "The title for death tab",
+    "config.application.registrationTimePeriodsGroupTitle": "The title for registration time periods group",
+    "config.application.registrationFeesGroupTitle": "The title for registration fee group",
     "config.application.phoneNumberPatternLabel": "Label for phone number pattern config",
     "config.application.phoneNumberExampleLabel": "Label for phone number example config",
     "config.application.applicationNameChangeNotification": "Application name change notification messages",

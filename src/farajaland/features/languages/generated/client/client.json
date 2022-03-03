@@ -1170,6 +1170,8 @@
         "config.application.generalTabTitle": "General",
         "config.application.birthTabTitle": "Birth",
         "config.application.deathTabTitle": "Death",
+        "config.application.registrationTimePeriodsGroupTitle": "Registration time periods",
+        "config.application.registrationFeesGroupTitle": "Registration fees",
         "config.application.phoneNumberPatternLabel": "pattern: {pattern}",
         "config.application.phoneNumberExampleLabel": "example: {example}",
         "config.application.applicationNameChangeNotification": "Name of application updated",

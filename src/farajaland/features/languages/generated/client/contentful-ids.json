@@ -1437,6 +1437,8 @@
   "configApplicationGeneralTabTitle": "config.application.generalTabTitle",
   "configApplicationBirthTabTitle": "config.application.birthTabTitle",
   "configApplicationDeathTabTitle": "config.application.deathTabTitle",
+  "configApplicationRegistrationTimePeriodsGroupTitle": "config.application.registrationTimePeriodsGroupTitle",
+  "configApplicationRegistrationFeesGroupTitle": "config.application.registrationFeesGroupTitle",
   "configApplicationPhoneNumberPatternLabel": "config.application.phoneNumberPatternLabel",
   "configApplicationPhoneNumberExampleLabel": "config.application.phoneNumberExampleLabel",
   "configApplicationApplicationNameChangeNotification": "config.application.applicationNameChangeNotification"
