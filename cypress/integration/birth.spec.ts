@@ -15,6 +15,26 @@ context('Birth Integration Test', () => {
   beforeEach(() => {
     indexedDB.deleteDatabase('OpenCRVS')
   })  
+
+  //Maximum input
+  it('Tests from application to registration using maximum input', () => {
+    cy.registerApplicationWithMaximumInput('Tammim', 'Mridha')
+  })
+
+  it('LogIn as Registrar to Register Maximum input Application',() => {
+    // LOGIN AS LOCAL REGISTRAR
+    cy.login('registrar')
+      // CREATE PIN
+    cy.createPin()
+      //review application
+    cy.reviewForm()
+
+     //register Application
+    cy.submitForm()
+      // LOG OUT
+    cy.logOut()
+  })  
+
   // Minimum input 
   it('Tests from application to certification using minimum input', () => {
     cy.declareApplicationWithMinimumInput('Arif', 'Antor')
@@ -34,25 +54,7 @@ context('Birth Integration Test', () => {
     cy.logOut()
   }) 
 
-  //Maximum input
-  it('Tests from application to registration using maximum input', () => {
-    cy.registerApplicationWithMaximumInput('Sharifuz', 'Prantor')
-  })
-
-  it('LogIn as Registrar to Register Maximum input Application',() => {
-    // LOGIN AS LOCAL REGISTRAR
-    cy.login('registrar')
-      // CREATE PIN
-    cy.createPin()
-      //review application
-    cy.reviewForm()
-
-     //register Application
-    cy.submitForm()
-      // LOG OUT
-    cy.logOut()
-  })  
-
+  
   
  // Rejection Minimum
   it('Tests from application to rejection using minimum input', () => {

@@ -61,7 +61,6 @@ context('Death Integration Test', () => {
      // LOG OUT
     // cy.logOut()
   }) 
-  
 
   it('Tests from application to rejection using minimum input', () => {
     cy.declareDeathApplicationWithMinimumInput()
@@ -80,7 +79,6 @@ context('Death Integration Test', () => {
       //logout
   //  cy.logOut()
   }) 
-  
 
   it('Tests from application to rejection using maximum input', () => {
 
@@ -99,7 +97,6 @@ context('Death Integration Test', () => {
       //logout
   //  cy.logOut()l
   }) 
-  
   
 
 })
