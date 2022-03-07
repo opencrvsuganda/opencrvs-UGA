@@ -46,6 +46,7 @@ export default async function importCertificates() {
     })
   
    const defaultConfig = new Config({
+      APPLICATION_NAME: "OpenCRVS",
       BACKGROUND_SYNC_BROADCAST_CHANNEL: "backgroundSynBroadCastChannel",
       COUNTRY: "FAR",
       COUNTRY_LOGO_FILE: "logo.png",

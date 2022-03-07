@@ -9,6 +9,7 @@
  * Copyright (C) The OpenCRVS Authors. OpenCRVS and the OpenCRVS
  * graphic logo are (registered/a) trademark(s) of Plan International.
  */
+import { string } from 'joi'
 import { model, Schema, Document } from 'mongoose'
 
 interface IPhoneNumberPattern {
@@ -29,6 +30,7 @@ interface INIDNumberPattern {
 }
 
 export interface IApplicationConfigurationModel extends Document {
+  APPLICATION_NAME: string,
   BACKGROUND_SYNC_BROADCAST_CHANNEL: string
   COUNTRY: string
   COUNTRY_LOGO_FILE: string
@@ -72,6 +74,7 @@ const phoneNumberSchema = new Schema<IPhoneNumberPattern>({
 })
 
 const systemSchema = new Schema({
+  APPLICATION_NAME: { type: String, require: false, default: 'OpenCRVS'},
   BACKGROUND_SYNC_BROADCAST_CHANNEL: { type: String, required: false },
   COUNTRY: { type: String, required: false },
   COUNTRY_LOGO_FILE: { type: String, required: false },
