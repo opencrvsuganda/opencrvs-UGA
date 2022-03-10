@@ -23,14 +23,8 @@ interface IPhoneNumberPattern {
   }
 }
 
-interface INIDNumberPattern {
-  pattern: RegExp
-  example: string
-  num: string
-}
-
 export interface IApplicationConfigurationModel extends Document {
-  APPLICATION_NAME: string,
+  APPLICATION_NAME: string
   BACKGROUND_SYNC_BROADCAST_CHANNEL: string
   COUNTRY: string
   COUNTRY_LOGO_FILE: string
@@ -53,14 +47,8 @@ export interface IApplicationConfigurationModel extends Document {
   PHONE_NUMBER_PATTERN: IPhoneNumberPattern
   BIRTH_REGISTRATION_TARGET: number
   DEATH_REGISTRATION_TARGET: number
-  NID_NUMBER_PATTERN: INIDNumberPattern
+  NID_NUMBER_PATTERN: string
 }
-
-const nidPatternSchema = new Schema<INIDNumberPattern>({
-  pattern: { type: String },
-  example: String,
-  num: String
-})
 
 const phoneNumberSchema = new Schema<IPhoneNumberPattern>({
   pattern: { type: String },
@@ -74,7 +62,7 @@ const phoneNumberSchema = new Schema<IPhoneNumberPattern>({
 })
 
 const systemSchema = new Schema({
-  APPLICATION_NAME: { type: String, require: false, default: 'OpenCRVS'},
+  APPLICATION_NAME: { type: String, require: false, default: 'OpenCRVS' },
   BACKGROUND_SYNC_BROADCAST_CHANNEL: { type: String, required: false },
   COUNTRY: { type: String, required: false },
   COUNTRY_LOGO_FILE: { type: String, required: false },
@@ -139,7 +127,7 @@ const systemSchema = new Schema({
     required: false,
     default: 45
   },
-  NID_NUMBER_PATTERN: { type: nidPatternSchema, required: false },
+  NID_NUMBER_PATTERN: { type: String, required: false },
   SENTRY: { type: String, required: false },
   LOGROCKET: { type: String, required: false }
 })
