@@ -17,38 +17,38 @@ context('Birth Integration Test', () => {
   })  
 
   //Maximum input
-  it('Tests from application to registration using maximum input', () => {
-    cy.registerApplicationWithMaximumInput('Tammim', 'Mridha')
+  it('Tests from declaration to registration using maximum input', () => {
+    cy.registerDeclarationWithMaximumInput('Tammim', 'Mridha')
   })
 
-  it('LogIn as Registrar to Register Maximum input Application',() => {
+  it('LogIn as Registrar to Register Maximum input Declaration',() => {
     // LOGIN AS LOCAL REGISTRAR
     cy.login('registrar')
       // CREATE PIN
     cy.createPin()
-      //review application
+      //review declaration
     cy.reviewForm()
 
-     //register Application
+     //register Declaration
     cy.submitForm()
       // LOG OUT
     cy.logOut()
   })  
 
   // Minimum input 
-  it('Tests from application to certification using minimum input', () => {
-    cy.declareApplicationWithMinimumInput('Arif', 'Antor')
-    
+  it('Tests from declaration to certification using minimum input', () => {
+    cy.declareDeclarationWithMinimumInput('Arif', 'Antor')
   })
  
-  it('Login as registrar to register minimum input Birth application',() => {
+  it('LogIn as Registrar to Register Maximum input Declaration',() => {
+    // LOGIN AS LOCAL REGISTRAR
     cy.login('registrar')
       // CREATE PIN
     cy.createPin()
-      //review application
+      //review declaration
     cy.reviewForm()
 
-     //register Application
+     //register Declaration
     cy.submitForm()
       // LOG OUT
     cy.logOut()
@@ -57,37 +57,37 @@ context('Birth Integration Test', () => {
   
   
  // Rejection Minimum
-  it('Tests from application to rejection using minimum input', () => {
-   cy.declareApplicationWithMinimumInput('Aariz', 'Sahil')
+  it('Tests from declaration to rejection using minimum input', () => {
+   cy.declareDeclarationWithMinimumInput('Aariz', 'Sahil')
   })
 
-  it('Login as Register & Reject Minimum input Application',() => {
+  it('Login as Register & Reject Minimum input Declaration',() => {
     // LOGIN AS LOCAL REGISTRAR
     cy.login('registrar')
     // CREATE PIN
     
     cy.createPin()
-      // LANDING PAGE Download 1st application 
+      // LANDING PAGE Download 1st declaration 
     cy.reviewForm()
-      //Reject Application
-    cy.rejectApplication()
+      //Reject Declaration
+    cy.rejectDeclaration()
       //logout
    cy.logOut()
   })
    
   //Rejection Maximum
-  it('Tests from application to rejection using maximum input', () => {
-    cy.declareApplicationWithMaximumInput('Larry', 'Page')
+  it('Tests from declaration to rejection using maximum input', () => {
+    cy.declareDeclarationWithMaximumInput('Larry', 'Page')
   })
 
-  it('Login as Registrar & Reject Maximum input Application',()=>{
+  it('Login as Registrar & Reject Maximum input Declaration',()=>{
       // LOGIN AS LOCAL REGISTRAR
     cy.login('registrar')
       // CREATE PIN
     cy.createPin()
-      // LANDING PAGE,Download Application
+      // LANDING PAGE,Download Declaration
     cy.reviewForm()
-    cy.rejectApplication()
+    cy.rejectDeclaration()
       //logout
     cy.logOut()
   })
@@ -104,11 +104,11 @@ context('Birth Integration Test', () => {
     cy.clock(new Date().getTime())
     cy.enterMaximumInput('Ryan', 'Crichton')
     
-    //register application
-    cy.get('#registerApplicationBtn').click()
+    //register declaration
+    cy.get('#registerDeclarationBtn').click()
     //MODAL
     cy.get('#submit_confirm').click()
-    cy.log('Waiting for application to sync...')
+    cy.log('Waiting for declaration to sync...')
     cy.tick(20000)
   }) 
 
@@ -123,21 +123,21 @@ context('Birth Integration Test', () => {
     cy.initializeFakeTimers()
     cy.someoneElseJourney()
 
-    cy.submitApplication()
+    cy.submitDeclaration()
     // LOG OUT
     cy.get('#ProfileMenuToggleButton').click()
     cy.get('#ProfileMenuItem1').click()
   }) 
 
-  it('Login as Registrar & register Someone else minimum input application',()=>{
+  it('Login as Registrar & register Someone else minimum input declaration',()=>{
     // LOGIN AS LOCAL REGISTRAR
     cy.login('registrar')
     // CREATE PIN
   cy.createPin()
-    //review application
+    //review declaration
   cy.reviewForm()
 
-   //register Application
+   //register Declaration
   cy.submitForm()
   cy.wait(1000)
     // LOG OUT
