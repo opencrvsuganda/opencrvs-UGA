@@ -40,7 +40,7 @@ context('Birth Integration Test', () => {
     cy.declareDeclarationWithMinimumInput('Arif', 'Antor')
   })
  
-  it('LogIn as Registrar to Register Maximum input Declaration',() => {
+  it('LogIn as Registrar to Register Minimum input Declaration',() => {
     // LOGIN AS LOCAL REGISTRAR
     cy.login('registrar')
       // CREATE PIN

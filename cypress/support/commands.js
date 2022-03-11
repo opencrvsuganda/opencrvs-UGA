@@ -414,8 +414,8 @@ Cypress.Commands.add(
     cy.get('#fatherBirthDate-yyyy').type('1969')
 
     cy.selectOption('#countryPermanent', 'Farajaland', 'Farajaland')
-    cy.selectOption('#statePermanent', 'Luapula', 'Luapula')
-    cy.selectOption('#districtPermanent', 'Chembe', 'Chembe')
+    cy.selectOption('#statePermanent', 'Pualula', 'Pualula')
+    cy.selectOption('#districtPermanent', 'Embe', 'Embe')
     cy.goToNextFormSection()
 
     // DOCUMENTS
