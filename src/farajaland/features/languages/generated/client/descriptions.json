@@ -848,6 +848,24 @@
     "config.certificate.uploadCertificateDialogDescription": "The description for the dialog when upload new certificate template",
     "config.certificate.uploadCertificateDialogConfirm": "Confirm new certificate template upload button",
     "config.certificate.uploadCertificateDialogCancel": "Cancel new certificate template upload button",
+    "form.config.navigation.introduction": "Label for Introduction in page navigation",
+    "form.config.navigation.child.": "Label for Child details in page navigation",
+    "form.config.navigation.mother": "Label for Mothers details in page navigation",
+    "form.config.navigation.father": "Label for  Fathers details in page navigation",
+    "form.config.navigation.informant": "Label for Informant details in page navigation",
+    "form.config.navigation.documents": "Label for Documents upload in page navigation",
+    "form.config.navigation.deceased": "Label for Deceased details in page navigation",
+    "form.config.navigation.deathEvent": "Label for Event details in page navigation",
+    "form.config.navigation.causeOfDeath": "Label for Cause of death in page navigation",
+    "form.config.tools.showHiddenFields": "Label for Show hidden fields in form tools",
+    "form.config.tools.textInput": "Label for Text input in form tools",
+    "form.config.tools.textAreaInput": "Label for Text area input in form tools",
+    "form.config.tools.numberInput": "Label for Number input in form tools",
+    "form.config.tools.phoneNumberInput": "Label for Phone number input in form tools",
+    "form.config.tools.heading": "Label for Heading in form tools",
+    "form.config.tools.supportingCopy": "Label for Supporting copy in form tools",
+    "form.config.tools.addInputContent": "Label for Add input/content in form tools",
+    "form.config.navigation.spouse": "Label for Spouse in page navigation",
     "settings.changePhone": "Change phone number title",
     "settings.verifyPhone": "Verify phone number title",
     "recordAudit.archive.status": "Archived status",
@@ -857,6 +875,5 @@
     "regHome.outbox.statusWaitingToBeArchived": "Label for application status waiting to be reinstated",
     "regHome.outbox.statusReinstating": "Label for application status Archiving",
     "regHome.outbox.statusWaitingToBeReinstated": "Label for application status waiting to be reinstated"
-
   }
 }
