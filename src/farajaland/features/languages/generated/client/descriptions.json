@@ -934,6 +934,20 @@
     "regHome.outbox.statusArchiving": "Label for application status Archiving",
     "regHome.outbox.statusWaitingToBeArchived": "Label for application status waiting to be reinstated",
     "regHome.outbox.statusReinstating": "Label for application status Archiving",
-    "regHome.outbox.statusWaitingToBeReinstated": "Label for application status waiting to be reinstated"
+    "regHome.outbox.statusWaitingToBeReinstated": "Label for application status waiting to be reinstated",
+    "config.formConfigPageTitle": "Title for Form Configuration Page",
+    "config.birthFormConfigLabel":"Label for birth form config template",
+    "config.deathFormConfigLabel": "Label for death form config template",
+    "config.formConfigPublishedTabLabel":"Label for published tab of form config page",
+    "config.formConfigDraftsTabLabel":"Label for drafts tab of form config page",
+    "config.formConfigInPreviewTabLabel":"Label for in preview tab of form config page",
+    "config.formConfigPublishButtonLabel":"Label for publish button form config page",
+    "config.formConfigEditButtonLabel":"Label for edit button form config page",
+    "config.formConfigPageSubtitle": "Sub title of form configuration page",
+    "config.formConfigDefaultConfig": "Label for default form config template",
+    "config.formConfigureButtonLabel":"Label of configure button of form config page",
+    "config.previewFormConfiguration":"Label of preview button of form config page menu",
+    "config.finalizeFormConfiguration":"Label of finalise button of form config page menu",
+    "config.deleteDraftMenuButton":"Label of delete button of form config page menu"
   }
 }

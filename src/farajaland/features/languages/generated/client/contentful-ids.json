@@ -1512,5 +1512,20 @@
   "configApplicationPhoneNumberChangeNotification": "config.application.phoneNumberChangeNotification",
   "configApplicationGovtLogoChangeNotification": "config.application.govtLogoChangeNotification",
   "configApplicationGovtLogoChangeError": "config.application.govtLogoChangeError",
-  "configApplicationGovtLogoFileLimitError": "config.application.govtLogoFileLimitError"
+  "configApplicationGovtLogoFileLimitError": "config.application.govtLogoFileLimitError",
+  "configFormConfigPageTitle":"config.formConfigPageTitle",
+  "configBirthFormConfigLabel":"config.birthFormConfigLabel",
+  "configDeathFormConfigLabel": "config.deathFormConfigLabel",
+  "configFormConfigPublishedTabLabel":"config.formConfigPublishedTabLabel",
+  "configFormConfigDraftsTabLabel":"config.formConfigDraftsTabLabel",
+  "configFormConfigInPreviewTabLabel":"config.formConfigInPreviewTabLabel",
+  "configFormConfigPublishButtonLabel": "config.formConfigPublishButtonLabel",
+  "configFormConfigEditButtonLabel": "config.formConfigEditButtonLabel",
+  "configFormConfigPageSubtitle": "config.formConfigPageSubtitle",
+  "configFormConfigDefaultConfig": "config.formConfigDefaultConfig",
+  "configFormConfigureButtonLabel": "config.formConfigureButtonLabel",
+  "configPreviewFormConfiguration": "config.previewFormConfiguration",
+  "configFinalizeFormConfiguration": "config.finalizeFormConfiguration",
+  "configDeleteDraftMenuButton": "config.deleteDraftMenuButton"
+
 }
