@@ -1497,7 +1497,11 @@
         "user.profile.audit.description.registered": "Registered vital event",
         "user.profile.audit.description.rejected": "Sent declaration for updates",
         "user.profile.audit.description.certified": "Printed certificate",
-        "user.profile.auditList.showMore": "Show next {pageSize} of {totalItems}"
+        "user.profile.auditList.showMore": "Show next {pageSize} of {totalItems}",
+        "config.formConfig.formTools.contentKey": "Content key",
+        "config.formConfig.formTools.certificateHandlebars": "Certificate handlebars",
+        "config.formConfig.formTools.hideField": "Hide field",
+        "config.formConfig.formTools.requiredForRegistration": "Required for registration"
       }
     },
     {
@@ -2933,8 +2937,11 @@
         "config.formConfigureButtonLabel":"Configure",
         "config.previewFormConfiguration":"Preview",
         "config.finalizeFormConfiguration":"Finalize",
-        "config.deleteDraftMenuButton":"Delete"
-
+        "config.deleteDraftMenuButton":"Delete",
+        "config.formConfig.formTools.contentKey": "Clé de contenu",
+        "config.formConfig.formTools.certificateHandlebars": "Certificat guidons",
+        "config.formConfig.formTools.hideField": "Masquer le champ",
+        "config.formConfig.formTools.requiredForRegistration": "Requis pour l'enregistrement"
       }
     }
   ]

@@ -1526,6 +1526,9 @@
   "configFormConfigureButtonLabel": "config.formConfigureButtonLabel",
   "configPreviewFormConfiguration": "config.previewFormConfiguration",
   "configFinalizeFormConfiguration": "config.finalizeFormConfiguration",
-  "configDeleteDraftMenuButton": "config.deleteDraftMenuButton"
-
+  "configDeleteDraftMenuButton": "config.deleteDraftMenuButton",
+  "configFormConfigFormToolsContentKey": "config.formConfig.formTools.contentKey",
+  "configFormConfigFormToolsCertificateHandlebars": "config.formConfig.formTools.certificateHandlebars",
+  "configFormConfigFormToolsHideField": "config.formConfig.formTools.hideField",
+  "configFormConfigFormToolsRequiredForRegistration": "config.formConfig.formTools.requiredForRegistration"
 }

@@ -948,6 +948,10 @@
     "config.formConfigureButtonLabel":"Label of configure button of form config page",
     "config.previewFormConfiguration":"Label of preview button of form config page menu",
     "config.finalizeFormConfiguration":"Label of finalise button of form config page menu",
-    "config.deleteDraftMenuButton":"Label of delete button of form config page menu"
+    "config.deleteDraftMenuButton":"Label of delete button of form config page menu",
+    "config.formConfig.formTools.contentKey": "Content key label for formTools",
+    "config.formConfig.formTools.certificateHandlebars": "Certificate handlebars label for formTools",
+    "config.formConfig.formTools.hideField": "Hide field label for formTools",
+    "config.formConfig.formTools.requiredForRegistration": "Required for registration label for formTools"
   }
 }
