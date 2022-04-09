@@ -9,7 +9,9 @@
 # graphic logo are (registered/a) trademark(s) of Plan International.
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd)
+DEFAULT_DIR=$(cd "$(dirname "$0")"; pwd)
+DIR="${DIR:-$DEFAULT_DIR}"
+
 echo "Working dir: $DIR"
 
 if [ "$REPLICAS" = "0" ]; then
