@@ -57,44 +57,42 @@ export function createUsers(users: IUserModel[]) {
   const fieldAgentRole = new Role({
     title: 'Field Agent',
     value: 'FIELD_AGENT',
-    types: ['HOSPITAL', 'CHA'],
+    types: ['HEALTHCARE_WORKER',
+    'POLICE_OFFICER',
+    'LOCAL_LEADER',
+    'SOCIAL_WORKER'],
     active: true
   })
 
-  const regitstrationAgentRole = new Role({
-    title: 'Registration Agent',
-    value: 'REGISTRATION_AGENT',
-    types: ['ENTREPENEUR', 'DATA_ENTRY_CLERK'],
-    active: true
-  })
+const regitstrationAgentRole = new Role({
+  title: 'Registration Agent',
+  value: 'REGISTRATION_AGENT',
+  active: true
+})
 
-  const regitstrarRole = new Role({
-    title: 'Registrar',
-    value: 'LOCAL_REGISTRAR',
-    types: ['SECRETARY', 'CHAIRMAN', 'MAYOR'],
-    active: true
-  })
+const regitstrarRole = new Role({
+  title: 'Registrar',
+  value: 'LOCAL_REGISTRAR',
+  active: true
+})
 
-  const sysAdminLocalRole = new Role({
-    title: 'System admin (local)',
-    value: 'LOCAL_SYSTEM_ADMIN',
-    types: ['LOCAL_SYSTEM_ADMIN'],
-    active: true
-  })
+const sysAdminLocalRole = new Role({
+  title: 'Local System Admin',
+  value: 'LOCAL_SYSTEM_ADMIN',
+  active: true
+})
 
-  const sysAdminNationalRole = new Role({
-    title: 'System admin (national)',
-    value: 'NATIONAL_SYSTEM_ADMIN',
-    types: ['NATIONAL_SYSTEM_ADMIN'],
-    active: true
-  })
+const sysAdminNationalRole = new Role({
+  title: 'National System Admin',
+  value: 'NATIONAL_SYSTEM_ADMIN',
+  active: true
+})
 
-  const performanceMgntRole = new Role({
-    title: 'Performance Management',
-    value: 'PERFORMANCE_MANAGEMENT',
-    types: ['DNRPC'],
-    active: true
-  })
+const performanceMgntRole = new Role({
+  title: 'Performance Manager',
+  value: 'PERFORMANCE_MANAGEMENT',
+  active: true
+})
 
   const roles = [
     fieldAgentRole,

@@ -31,8 +31,7 @@ context('Team Integration Test', () => {
     cy.get('#firstNamesEng').type(testUserFirstname)
     cy.get('#familyNameEng').type(testUserLastname)
     cy.get('#phoneNumber').type('0752658545')
-    cy.selectOption('#role', 'Registration Clerk', 'Registration Clerk')
-    cy.selectOption('#type', 'Data entry clerk', 'Data entry clerk')
+    cy.selectOption('#role', 'Registration Agent', 'Registration Agent')
     cy.get('#device').type('Xiamoi MI 8')
     cy.get('#confirm_form').click()
     // PREVIEW
