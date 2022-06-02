@@ -242,7 +242,6 @@
     "userSetup.securityQuestions.birthTown": "The description for BIRTH_TOWN key",
     "constants.cha": "The description for CHA type",
     "constants.chairman": "The description for CHAIRMAN type",
-    "settings.message.changeLanguage": "Change language message",
     "settings.changeLanguage.success": "Change language success",
     "settings.changeLanguage": "Change language title",
     "constants.dataEntryClerk": "The description for DATA_ENTRY_CLERK type",
