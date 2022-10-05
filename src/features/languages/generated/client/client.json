@@ -3525,7 +3525,7 @@
         "user.profile.audit.column.action": "Action",
         "user.profile.audit.column.date": "Date",
         "user.profile.audit.column.eventType": "Événement",
-        "user.profile.audit.column.trackingId": "Dossier",
+        "user.profile.audit.column.trackingId": "ID de suivi",
         "user.profile.audit.description.certified": "Certificat imprimé",
         "user.profile.audit.description.declared": "Déclaration envoyée pour révision - complète",
         "user.profile.audit.description.inProgress": "Déclaration envoyée pour révision - incomplète",
