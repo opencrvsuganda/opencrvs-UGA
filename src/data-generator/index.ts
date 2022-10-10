@@ -701,6 +701,9 @@ function birthDeclarationWorkflow(
               declaration
             )
           } else {
+            /* When the declaration is kept incomplete, we don't provide the gender when sending
+             * the declaration. So before registering we add the gender to make it complete
+             */
             if (keepDeclarationIncomplete) {
               declaration.child = { ...declaration.child, gender: sex }
             }
@@ -824,6 +827,9 @@ function deathDeclarationWorkflow(
           compositionId
         )
 
+        /* When the declaration is kept incomplete, we don't provide the gender when sending
+         * the declaration. So before registering we add the gender to make it complete
+         */
         if (keepDeclarationIncomplete) {
           declaration.deceased = { ...declaration.deceased, gender: sex }
         }
