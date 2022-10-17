@@ -23,7 +23,7 @@ jobs:
   deploy:
     environment: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-20.04
-    timeout-minutes: 60
+    timeout-minutes: 600
     strategy:
       matrix:
         node-version: [14.17.0]
