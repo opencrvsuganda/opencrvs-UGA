@@ -31,7 +31,7 @@ jobs:
       - name: Clone core
         uses: actions/checkout@v3
         with:
-          repository: 'opencrvs/opencrvs-core'
+          repository: 'opencrvsuganda/opencrvs-core'
           path: './opencrvs-core'
           ref: ${{ github.event.inputs.core-image-tag }}
       - name: Clone country config resource package
